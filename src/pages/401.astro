@@ -1,0 +1,47 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<BaseHead title={`401 止步 | ${SITE_TITLE}`} description="此地重门深锁，未佩符节者不可入内。" />
+	</head>
+	<body class="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 transition-colors duration-300 font-body flex flex-col min-h-screen">
+		<Header />
+		
+		<main class="flex-grow flex items-center justify-center -mt-10 px-6 sm:px-12 relative overflow-hidden">
+			<!-- Background Asymmetric Element -->
+			<div class="absolute right-[-5%] md:right-[5%] top-[15%] md:top-[20%] text-[15rem] md:text-[25rem] font-headline font-bold text-neutral-900/[0.03] dark:text-white/[0.02] leading-none select-none pointer-events-none z-0">
+				401
+			</div>
+			
+			<div class="max-w-4xl w-full flex flex-col items-start z-10 relative pl-4 md:pl-16">
+				<!-- Red Vertical Stroke Accent -->
+				<div class="absolute left-0 top-2 bottom-6 w-px bg-gradient-to-b from-[#bc152d] via-[#bc152d]/50 to-transparent"></div>
+				
+				<span class="text-[#bc152d] font-body text-xs tracking-[0.3em] uppercase mb-8 block">Unauthorized</span>
+				
+				<h1 class="font-headline text-5xl md:text-7xl font-bold mb-8 text-neutral-900 dark:text-neutral-100 leading-tight">
+					禁苑深户<br/>
+					<span class="text-neutral-400 dark:text-neutral-600 font-normal">止步于此</span>
+				</h1>
+				
+				<p class="text-neutral-500 dark:text-neutral-400 mb-16 text-lg tracking-wide leading-relaxed max-w-lg font-body">
+					此地卷帙浩繁，乃私苑禁区。<br/>
+					未持朱批符节者，不可擅入查阅。
+				</p>
+				
+				<a href="/" class="inline-flex items-center gap-4 px-8 py-3 bg-transparent text-neutral-700 dark:text-neutral-200 font-medium rounded-none border border-neutral-300 dark:border-neutral-700 hover:border-[#bc152d] hover:text-[#bc152d] dark:hover:border-[#ffb3b1] dark:hover:text-[#ffb3b1] transition-all duration-500 ease-out no-underline uppercase tracking-widest text-sm group">
+					<svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+					退而修心
+				</a>
+			</div>
+		</main>
+
+		<Footer />
+	</body>
+</html>

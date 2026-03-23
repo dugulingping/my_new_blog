@@ -1,0 +1,135 @@
+---
+// src/components/SearchModal.astro
+---
+
+<dialog id="search-modal" class="backdrop:bg-neutral-900/50 backdrop:backdrop-blur-sm bg-transparent w-full max-w-2xl mx-auto mt-20 p-0 rounded-none shadow-2xl border border-neutral-200 dark:border-neutral-800 focus:outline-none font-body">
+	<div class="bg-white dark:bg-neutral-900 w-full rounded-none overflow-hidden flex flex-col max-h-[80vh]">
+		<div class="p-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center gap-3">
+			<svg class="w-5 h-5 text-neutral-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+			<input type="text" id="search-input" placeholder="搜索文章..." class="w-full bg-transparent text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none text-lg px-2" autocomplete="off" />
+			<button id="close-search" class="p-1 rounded-none text-neutral-400 hover:text-[#bc152d] dark:hover:text-[#ffb3b1] border border-transparent hover:border-[#bc152d] dark:hover:border-[#ffb3b1] text-xs px-2 flex-shrink-0 transition-colors uppercase tracking-widest">ESC</button>
+		</div>
+		<div id="search-results" class="overflow-y-auto p-2 hidden"></div>
+		<div id="search-empty" class="p-8 text-center text-neutral-500 dark:text-neutral-400 hidden">
+			没有找到匹配的文章
+		</div>
+		<div id="search-loading" class="p-8 text-center text-neutral-500 dark:text-neutral-400 hidden">
+			<svg class="animate-spin h-5 w-5 mx-auto text-neutral-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+			</svg>
+		</div>
+	</div>
+</dialog>
+
+<script is:inline>
+	function initSearch() {
+		let searchData = null;
+		const searchTrigger = document.getElementById('search-trigger');
+		const searchModal = document.getElementById('search-modal');
+		const searchInput = document.getElementById('search-input');
+		const closeSearchBtn = document.getElementById('close-search');
+		const searchResults = document.getElementById('search-results');
+		const searchEmpty = document.getElementById('search-empty');
+		const searchLoading = document.getElementById('search-loading');
+
+		if (!searchModal || !searchTrigger) return;
+
+		// Clean up old listeners if re-initialized
+		const newTrigger = searchTrigger.cloneNode(true);
+		searchTrigger.parentNode.replaceChild(newTrigger, searchTrigger);
+		
+		function openSearch() {
+			searchModal.showModal();
+			document.body.style.overflow = 'hidden';
+			setTimeout(() => searchInput.focus(), 10);
+			
+			if (!searchData) {
+				searchLoading.classList.remove('hidden');
+				fetch('/search.json')
+					.then(res => res.json())
+					.then(data => {
+						searchData = data;
+						searchLoading.classList.add('hidden');
+						if(searchInput.value) performSearch();
+					})
+					.catch(err => {
+						console.error("Failed to load search index:", err);
+						searchLoading.classList.add('hidden');
+					});
+			}
+		}
+
+		function closeSearch() {
+			searchModal.close();
+			document.body.style.overflow = '';
+			searchInput.value = '';
+			searchResults.innerHTML = '';
+			searchResults.classList.add('hidden');
+			searchEmpty.classList.add('hidden');
+		}
+
+		function performSearch() {
+			if (!searchData) return;
+			const query = searchInput.value.toLowerCase().trim();
+			
+			if (!query) {
+				searchResults.innerHTML = '';
+				searchResults.classList.add('hidden');
+				searchEmpty.classList.add('hidden');
+				return;
+			}
+			
+			const results = searchData.filter(item => 
+				item.title.toLowerCase().includes(query) || 
+				item.description.toLowerCase().includes(query)
+			);
+			
+			if (results.length === 0) {
+				searchResults.innerHTML = '';
+				searchResults.classList.add('hidden');
+				searchEmpty.classList.remove('hidden');
+			} else {
+				searchEmpty.classList.add('hidden');
+				
+				searchResults.innerHTML = results.map(item => `
+					<a href="/blog/${item.id}/" class="block p-4 mb-2 rounded-none hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors group no-underline border-l-2 border-transparent hover:border-[#bc152d]">
+						<h4 class="m-0 text-base font-headline font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#bc152d] dark:group-hover:text-[#ffb3b1]">${item.title}</h4>
+						<p class="m-0 mt-1 text-sm font-body text-neutral-500 dark:text-neutral-400 line-clamp-2">${item.description}</p>
+					</a>
+				`).join('');
+				searchResults.classList.remove('hidden');
+			}
+		}
+
+		newTrigger.addEventListener('click', openSearch);
+		closeSearchBtn?.addEventListener('click', closeSearch);
+		searchModal.addEventListener('click', (e) => {
+			if (e.target === searchModal) closeSearch();
+		});
+		searchInput?.addEventListener('input', performSearch);
+
+		// Remove old keyboard listener before adding new one
+		window.removeEventListener('keydown', window._searchKeyDown);
+		window._searchKeyDown = (e) => {
+			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+				e.preventDefault();
+				openSearch();
+			}
+			if (e.key === 'Escape' && searchModal.open) {
+				closeSearch();
+			}
+		};
+		window.addEventListener('keydown', window._searchKeyDown);
+	}
+
+	initSearch();
+	document.addEventListener('astro:after-swap', initSearch);
+</script>
+
+<style>
+dialog::backdrop {
+	background: rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(4px);
+}
+</style>
