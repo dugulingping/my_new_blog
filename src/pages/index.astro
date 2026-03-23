@@ -15,10 +15,16 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 	</head>
 	<body class="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
 		<Header />
-		<main class="mx-auto max-w-3xl px-4 py-10 prose prose-neutral dark:prose-invert font-body">
-			<div class="flex flex-col md:flex-row items-center gap-10 mb-20 mt-12">
-				<div class="flex-shrink-0 relative group">
-					<a href="/" class="relative block transition-transform duration-300 group-hover:-translate-y-1" style="width: 250px;">
+		<main class="mx-auto max-w-4xl px-4 py-10 font-body relative overflow-hidden">
+			<!-- Background Asymmetric Element removed to retain total clarity -->
+			
+			<div class="flex flex-col md:flex-row items-center gap-6 md:gap-10 mb-24 mt-12 relative z-10 md:pl-6">
+				<!-- Red Vertical Stroke Accent -->
+				<div class="absolute left-0 top-0 bottom-4 w-px bg-gradient-to-b from-[#bc152d] via-[#bc152d]/50 to-transparent shadow-[0_0_8px_rgba(188,21,45,0.4)] hidden md:block"></div>
+				
+				<!-- Logo -->
+				<div class="flex-shrink-0 w-48 md:w-64">
+					<a href="/" class="relative block transition-transform duration-500 hover:-translate-y-1 group">
 						<!-- Light mode logo -->
 						<Image src={LogoLight} alt={SITE_TITLE} class="theme-light-only w-full object-cover m-0 transition-transform duration-700 group-hover:scale-105" />
 						<!-- Dark mode logo -->
@@ -26,25 +32,30 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 					</a>
 				</div>
 				
-				<div class="flex-grow text-center md:text-left">
-					<h1 class="font-headline text-4xl md:text-5xl font-bold tracking-tight mb-4 text-neutral-900 dark:text-neutral-100">
-						你好，旅行者！
-					</h1>
-					<p class="text-xl text-neutral-600 dark:text-neutral-300 mb-6 leading-relaxed">
-						欢迎来到这片数字自留地。这里记录着技术探索的足印，以及对生活的不经意瞥视。
+				<div class="flex-grow text-left w-full mt-6 md:mt-24 lg:mt-32">
+					<div class="text-xs text-neutral-500 font-mono text-left mb-2">
+						// OP: BG9JYT | 73
+					</div>
+					<h2 class="font-headline text-xl md:text-2xl font-normal tracking-widest text-neutral-800 dark:text-neutral-200 mb-4 flex items-center">
+						算尽方寸，波传寰宇
+					</h2>
+					<p class="text-sm text-neutral-400 leading-relaxed max-w-lg tracking-wider mt-4 mb-8 text-left">
+						这里是 BG9JYT 的数字自留地。我将严谨写进底稿，将浪漫寄予天线，将理想编码成序。
 					</p>
-					<div class="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-8 mt-4">
-						<div class="flex gap-4">
-							<a href="/blog" class="px-6 py-2 bg-[#bc152d] text-white font-medium rounded-none hover:bg-[#a01226] transition-colors shadow-sm no-underline">
+					
+					<div class="flex flex-wrap items-center justify-start gap-4 md:gap-8 mt-4 relative z-20">
+						<div class="flex flex-col sm:flex-row items-start justify-start gap-4 w-full md:w-auto">
+							<a href="/blog" class="inline-flex w-full sm:w-auto justify-center items-center gap-3 px-6 py-2.5 bg-[#bc152d] text-white font-medium rounded-none hover:bg-[#a01226] transition-colors shadow-sm no-underline uppercase tracking-widest text-sm group">
+								<svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 								阅读文章
 							</a>
-							<a href="/about" class="px-6 py-2 bg-transparent text-neutral-600 dark:text-neutral-300 font-medium rounded-none border border-neutral-200 dark:border-neutral-700 hover:border-[#bc152d] hover:text-[#bc152d] dark:hover:border-[#ffb3b1] dark:hover:text-[#ffb3b1] transition-colors no-underline">
+							<a href="/about" class="inline-flex w-full sm:w-auto justify-center items-center px-6 py-2.5 bg-transparent text-neutral-900 dark:text-white font-medium rounded-none border border-neutral-900 dark:border-white hover:opacity-70 transition-opacity duration-300 no-underline uppercase tracking-widest text-sm">
 								了解更多
 							</a>
 						</div>
 						
-						<!-- Social Links (Moved from Header) -->
-						<div class="flex items-center gap-5 text-neutral-400">
+						<!-- Social Links -->
+						<div class="flex items-center gap-5 text-neutral-400 mt-4 md:mt-0">
 							<a href="https://m.webtoo.ls/@astro" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors relative group">
 								<span class="sr-only">在 Mastodon 上关注 Astro</span>
 								<svg viewBox="0 0 16 16" aria-hidden="true" class="w-5 h-5"><path fill="currentColor" d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"></path></svg>
@@ -62,24 +73,29 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 				</div>
 			</div>
 			
-			<div class="space-y-12">
-				<section class="border-t border-neutral-100 dark:border-neutral-800 pt-8 mt-12">
-					<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-						<svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-						近期随笔
+			<div class="prose prose-neutral dark:prose-invert max-w-none mx-auto lg:max-w-3xl space-y-12">
+				<section class="border-t border-neutral-200 dark:border-neutral-800 pt-8 mt-12">
+					<h2 class="text-2xl font-bold mb-8 flex items-center gap-2">
+						<svg class="w-6 h-6 text-[#bc152d]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+						编年纪事 / Logbook
 					</h2>
-					<p class="text-neutral-600 dark:text-neutral-400">
-						2026年，这里完成了从 Typecho 到 Astro 的华丽转身，全站部署于 Cloudflare Pages，采用 Tailwind CSS 构建现代化深浅色双轴体验。
-					</p>
+					<div class="relative pl-6 border-l w-full border-neutral-300 dark:border-neutral-700 mt-4">
+						<div class="absolute w-1.5 h-1.5 bg-neutral-500 dark:bg-neutral-500 left-[-3.5px] top-1.5 rounded-none"></div>
+						<div class="text-neutral-600 dark:text-neutral-400 leading-relaxed m-0 text-sm">
+							<span class="font-mono text-xs text-[#bc152d] dark:text-[#bc152d] opacity-90 mb-2 block tracking-widest">[14:20] #随笔</span>
+							2026 年，这里完成了一次从 Typecho 到 Astro 的优雅重构。近期，我使用 Memos 系统构建了轻量级的随笔载体，随时记录灵感与生活。
+						</div>
+					</div>
 				</section>
 				
-				<section class="p-6 bg-neutral-50 dark:bg-neutral-800/50 rounded-2xl border border-neutral-100 dark:border-neutral-800/80">
-					<h3 class="text-xl font-bold mb-4 mt-0">技术栈一览</h3>
-					<ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 mb-0 pl-5">
-						<li><strong>Astro 引擎</strong> — 极致性能，零 JS 客户端注入</li>
-						<li><strong>Tailwind CSS</strong> — 极速的深色模式与响应式适配</li>
-						<li><strong>Cloudflare</strong> — 遍布全球的边缘加速节点</li>
-						<li><strong>Markdown / MDX</strong> — 所见即所得的高效书写体验</li>
+				<section class="mt-12 p-6 bg-neutral-50 dark:bg-neutral-800/50 rounded-none border border-neutral-200 dark:border-neutral-800 relative z-0 overflow-hidden">
+					<div class="absolute inset-0 z-[-1] opacity-[0.05] dark:opacity-[0.05] pointer-events-none bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+					<h3 class="text-xl font-bold mb-6 mt-0">底层驱动 / Tech Stack</h3>
+					<ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 mb-0 pl-0 list-none text-sm text-neutral-600 dark:text-neutral-400">
+						<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-2">&gt;</span><span><strong class="text-neutral-900 dark:text-neutral-200">Astro 驱动</strong>：零 JS 注入，并利用 View Transitions 提供流畅的页面平滑过渡。</span></li>
+						<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-2">&gt;</span><span><strong class="text-neutral-900 dark:text-neutral-200">边缘计算</strong>：依托 Cloudflare，让数据随电波瞬息而至。</span></li>
+						<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-2">&gt;</span><span><strong class="text-neutral-900 dark:text-neutral-200">原子化美学</strong>：利用 Tailwind CSS 和 Typography 插件，勾勒深色模式下的视觉秩序。</span></li>
+						<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-2">&gt;</span><span><strong class="text-neutral-900 dark:text-neutral-200">Markdown / MDX</strong> — 所见即所得的高效书写体验。</span></li>
 					</ul>
 				</section>
 			</div>

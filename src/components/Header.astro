@@ -1,56 +1,84 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
 import SearchModal from "./SearchModal.astro";
+import IdentityRuler from "./IdentityRuler.astro";
 ---
 
-<header class="sticky top-0 z-50 m-0 px-4 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800 transition-colors duration-300">
-	<nav class="flex items-center justify-between mx-auto max-w-3xl py-4 relative">
-		<!-- Left: Search Button -->
-		<div class="z-10 flex-shrink-0">
-			<button id="search-trigger" aria-label="Search" class="group flex items-center gap-2.5 px-1 pb-1.5 pt-1 rounded-none text-neutral-500 hover:text-neutral-900 bg-transparent dark:text-neutral-400 dark:hover:text-neutral-100 transition-colors border-b border-neutral-300 dark:border-neutral-700 hover:border-[#bc152d] dark:hover:border-[#ffb3b1] focus:outline-none min-w-[160px] font-body">
-				<svg class="w-4 h-4 opacity-70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-				</svg>
-				<span class="hidden sm:inline-block tracking-widest text-base">搜索</span>
-				<div class="hidden md:flex ml-auto items-center text-[10px] font-sans text-neutral-400 dark:text-neutral-500 rounded-none border border-neutral-200 dark:border-neutral-700 px-1.5 py-0.5 tracking-wider uppercase group-hover:border-[#bc152d] dark:group-hover:border-[#ffb3b1] transition-colors">
-					<span class="opacity-80">⌘</span><span class="opacity-80 ml-0.5">K</span>
-				</div>
-			</button>
-		</div>
-
-		<!-- Center: Navigation Links -->
-		<div class="hidden sm:flex items-center gap-12 absolute left-1/2 -translate-x-1/2 font-headline tracking-widest">
+<header class="sticky top-0 z-50 m-0 px-4 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800 transition-colors duration-300 relative">
+	<nav class="flex items-center justify-end md:justify-between mx-auto max-w-4xl h-16 relative">
+		<!-- Left: Desktop Navigation Links -->
+		<div class="hidden md:flex items-center gap-12 z-10 font-headline tracking-widest">
 			<HeaderLink href="/" class="text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">首页</HeaderLink>
 			<HeaderLink href="/blog" class="text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">文章</HeaderLink>
 			<HeaderLink href="/about" class="text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">关于</HeaderLink>
 		</div>
 
-		<!-- Right: Theme & Social -->
-		<div class="flex items-center gap-4 z-10 flex-shrink-0">
+		<!-- Right: Action Icons -->
+		<div class="flex items-center gap-2 md:gap-4 z-10 flex-shrink-0">
+			<!-- Search Button -->
+			<button id="search-trigger" aria-label="Search" class="group flex items-center justify-center p-2 rounded-full md:rounded-none md:p-0 md:pb-1.5 md:pt-1 md:border-b border-neutral-300 dark:border-neutral-700 hover:border-[#bc152d] dark:hover:border-[#ffb3b1] text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 transition-colors focus:outline-none">
+				<svg class="w-5 h-5 md:w-4 md:h-4 opacity-70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+				</svg>
+				<span class="hidden md:inline-block tracking-widest text-sm ml-2">搜索</span>
+				<div class="hidden md:flex ml-3 items-center text-[10px] font-sans text-neutral-400 dark:text-neutral-500 rounded-none border border-neutral-200 dark:border-neutral-700 px-1.5 py-0.5 tracking-wider uppercase group-hover:border-[#bc152d] dark:group-hover:border-[#ffb3b1] transition-colors">
+					<span class="opacity-80">⌘</span><span class="opacity-80 ml-0.5">K</span>
+				</div>
+			</button>
+
 			<!-- Theme Toggle -->
-			<button id="theme-toggle" aria-label="Toggle theme" class="p-1.5 text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-all duration-300 active:scale-95 active:opacity-80 focus:outline-none">
-				<!-- Moon icon for light mode (shows when light) -->
+			<button id="theme-toggle" aria-label="Toggle theme" class="p-2 md:p-1.5 rounded-full text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors focus:outline-none">
 				<svg class="block dark:hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-				<!-- Sun icon for dark mode (shows when dark) -->
 				<svg class="hidden dark:block w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
 			</button>
 
+			<!-- Mobile Hamburger Menu Button -->
+			<button id="mobile-menu-toggle" aria-label="Toggle menu" class="md:hidden flex p-2 rounded-full text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors focus:outline-none">
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
+				</svg>
+			</button>
 		</div>
 	</nav>
 
-	<!-- Mobile Navigation Links (shows under the header on small screens) -->
-	<div class="sm:hidden border-t border-neutral-100 dark:border-neutral-800 pb-3 pt-3 flex items-center justify-center gap-8 font-headline tracking-widest">
-		<HeaderLink href="/" class="text-sm text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">首页</HeaderLink>
-		<HeaderLink href="/blog" class="text-sm text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">文章</HeaderLink>
-		<HeaderLink href="/about" class="text-sm text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">关于</HeaderLink>
+	<!-- Mobile Dropdown Menu -->
+	<div id="mobile-menu" class="hidden md:hidden absolute left-0 w-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800 flex flex-col items-center justify-center gap-6 py-6 font-headline tracking-widest shadow-xl">
+		<HeaderLink href="/" class="text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">首页</HeaderLink>
+		<HeaderLink href="/blog" class="text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">文章</HeaderLink>
+		<HeaderLink href="/about" class="text-neutral-500 hover:text-[#bc152d] dark:text-neutral-400 dark:hover:text-[#ffb3b1] transition-colors duration-300">关于</HeaderLink>
+
+		<!-- Social Links in Mobile Menu -->
+		<div class="flex items-center gap-6 text-neutral-400 mt-2">
+			<a href="https://m.webtoo.ls/@astro" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors relative group">
+				<span class="sr-only">Mastodon</span>
+				<svg viewBox="0 0 16 16" aria-hidden="true" class="w-5 h-5"><path fill="currentColor" d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"></path></svg>
+			</a>
+			<a href="https://twitter.com/astrodotbuild" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors relative group">
+				<span class="sr-only">Twitter</span>
+				<svg viewBox="0 0 16 16" aria-hidden="true" class="w-5 h-5"><path fill="currentColor" d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"></path></svg>
+			</a>
+			<a href="https://github.com/withastro/astro" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors relative group">
+				<span class="sr-only">GitHub</span>
+				<svg viewBox="0 0 16 16" aria-hidden="true" class="w-5 h-5"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+			</a>
+		</div>
 	</div>
 </header>
 
 <SearchModal />
+<IdentityRuler />
 
 <script is:inline>
 	document.getElementById('theme-toggle')?.addEventListener('click', () => {
 		const isDark = document.documentElement.classList.toggle('dark');
 		localStorage.setItem('theme', isDark ? 'dark' : 'light');
+	});
+
+	document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
+		const menu = document.getElementById('mobile-menu');
+		if (menu) {
+			menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+		}
 	});
 </script>
