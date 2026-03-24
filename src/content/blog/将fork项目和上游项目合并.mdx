@@ -1,0 +1,43 @@
+---
+title: "将fork项目和上游项目合并"
+description: "前段时间搞了个pac自动鉴别科学上网的项目，不过这个项目是fork自其他人的项目，原项目更新比较勤快，而我，咳咳，咕咕咕~ so我就要经常和原项目合并，以保持我的项目保持最新，白嫖，嘿嘿嘿。 那么就开始干吧~ 首先将fork的项目clone..."
+pubDate: "2020-07-27"
+createdAt: "2020-07-27 01:19:33"
+tags:
+  - "code"
+  - "git"
+  - "github"
+  - "git-clone"
+  - "合并"
+  - "解决冲突"
+updatedDate: "2020-07-27"
+updatedAt: "2020-07-27 01:20:44"
+---
+
+{/* migrated from Typecho: cid=164 | slug=164 | source-categories=code | source-tags=git,github,git-clone,合并,解决冲突 | merged-tags=code,git,github,git-clone,合并,解决冲突 */}
+
+前段时间搞了个pac自动鉴别科学上网的项目，不过这个项目是fork自其他人的项目，原项目更新比较勤快，而我，咳咳，咕咕咕~
+
+so我就要经常和原项目合并，以保持我的项目保持最新，白嫖，嘿嘿嘿。
+
+那么就开始干吧~
+
+首先将fork的项目clone到本地，之前已经在本地要pull一下，一定要保证本地的项目是最新的
+
+然后将源项目添加进remote，名字随便起就好啦。
+
+```shell
+git remote add updata 原项目地址
+```
+
+之后将项目同步一下
+
+```shell
+git fetch updata
+```
+
+在之后`git merge updata/master`要是冲突的话，就先解决合并冲突。
+
+最后`git commit`和`git push orgin master` 就行了
+
+之后我会单独写一篇关于解决合并冲突的文章~

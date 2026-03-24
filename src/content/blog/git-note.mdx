@@ -1,0 +1,131 @@
+---
+title: "git学习笔记"
+description: "贴两张阮一峰大神的图 两张都是描述Git工作流程的图 ! Git流程 https://cdn-upyun-image.srv.ink/IMGbed/2022/12/22/8kjsiB.jpg ! Git流程2 https://cdn-upy..."
+pubDate: "2022-12-22"
+createdAt: "2022-12-22 16:31:26"
+tags:
+  - "Linux"
+---
+
+{/* migrated from Typecho: cid=178 | slug=git-note | source-categories=Linux | merged-tags=Linux */}
+
+<a name="JJmRx"></a>
+## 贴两张阮一峰大神的图
+两张都是描述Git工作流程的图<br />![Git流程](https://cdn-upyun-image.srv.ink/IMGbed/2022/12/22/8kjsiB.jpg))
+
+![Git流程2](https://cdn-upyun-image.srv.ink/IMGbed/2022/12/22/apjH6u.jpg)
+
+<a name="bouGN"></a>
+## git init & clone
+`init`命令是在一个空目录中新建一个Git仓库<br />`clone`命令是将一个项目的Git仓库下载到本地<br />`init --bare`一般用于远程仓库的初始化,其功能是只创建GIt数据目录, see: [最简单的Git服务器](https://www.ruanyifeng.com/blog/2022/10/git-server.html)
+<a name="hbbIs"></a>
+## git config
+`config --list`查看所有配置<br />`config -e [--global]`编辑配置文件
+```shell
+# 设置提交代码时的用户信息
+$ git config [--global] user.name "[name]"
+$ git config [--global] user.email "[email address]"
+```
+<a name="h6NId"></a>
+## git add && rm && mv
+`add`是将某个文件/文件夹或多个文件/文件夹添加到暂存区<br />`add -p`确认文件的每一个修改, 可以实现同一个文件造成多次commit<br />`rm` 删除工作区中的文件/文件夹, 并将删除的这个操作放入暂存区·<br />`mv` 改名工作区的某个文件, 并把这个操作放入暂存区
+<a name="s9vOQ"></a>
+## git commit
+提交一次代码 <br />`-m`用来标记提交的解释<br />`-a`省去了`add`的操作, 直接提交自上次commit到现在工作区的改变的内容<br />`-v`显示`diff`信息<br />`--amend`使用一次新的commit来替代上次commit, 一般用于代码的小修小改, 或者`-m`信息不小心写错了
+<a name="pAqZw"></a>
+## git branch
+功能有列出所有分支, 新建分支，删除分支, 为分支指定远程分支等<br />直接执行该命令，会打印出当前仓库下的所有本地分支<br />`-r`打印出所有远程分支<br />`-a`打印出包括本地分支和远程分支<br />`[branch_name]`新建分支，但不切换到新的分支<br />`[branch_name] [commit]`新建分支, 并指定到某一次提交,这里的[commit]可以是Hash值,也可以是HEAD ~ ^ 相对引用<br />`--track [branch][remote_branch]`新建分支, 并指定与远程分支的追踪关系<br />`-d [branch]`删除分支<br />`-dr [remote_branch]`删除远程分支
+<a name="sj1k7"></a>
+## git checkout
+功能有很多<br />`checkout [branch_name]`签出到某一分支或者某一节点<br />`-b` 新建分支并签出到该分支
+```shell
+git checkout -b bugFix
+# 相当于
+git branch bugFix
+git checkout bugFix
+# 还可以新建分支并指定该分支的远程分支
+git checkout -b bugFix origin/bugFix
+# 若要绑定的远程分支存在则直接绑定, 若不存在, 则新建
+
+git checkout -b [branch_name] [tag]
+# 创建新的分支在并指向tag所在的节点
+```
+`--orphan`新建一个没有任何commit的空分支, 适合在需要一个全新的功能时候使用<br />`checkout [file]`回退暂存区的某个文件到工作区<br />`checkout .`回退暂存区的所有文件到工作区<br />`--`丢弃工作区中某个文件的修改, 如果已经add到暂存区, 可以使用`git resrt HEAD .`命令
+<a name="ufEfn"></a>
+## git merge
+合并分支并在当前分支创建新的commit<br />`git merge bugFix`	# 合并 bugFix分支<br />·git merge fixes main·	# 合并fixes和main两个分支<br />`-m` 与commit的一样
+<a name="CDWbY"></a>
+## git rebase
+变基, 按照我的理解就是, 合并分支进目标分支, 不会造成分支的分叉, 提交链上始终只有一条线, 而不是提交树<br />`git rebase main bugFix`<br />上面的命令是将bugFix分支rebase到main分支, 使得bugFix分支回归到main分支的提交链.<br />如果当前HEAD在bugFix上,则可以省略后面bugFix参数<br />`-i [commit]`重新排序之前的提交,可以隐藏掉一些commit<br />`--cuntinue` 代码冲突时,rebase会暂停, 解决完冲突之后使用add添加暂存之后使用--cuntinue会继续
+<a name="NeIye"></a>
+## git cherry-pick
+合并某一个提交节点并在当前分支上生成对应的`commit`, 也可以指定A...B, 代表A-B中间一连串的提交, 也可以组合`^ ~`这种相对定位符号使用<br />`git  cherry-pick A` # 代表只将A这一次提交合并到我们的当前分支, 并且会和当前的分支合并后生成一个新的commit
+<a name="nuHCs"></a>
+## git fetch
+下载远程服务器上的变动, 但是不会改变本地仓库的任何文件, 也不会改变分支和HEAD指针<br />`[remote]`下载变动
+<a name="p4djA"></a>
+## git remote
+`-v`显示所有的远程仓库<br />`add [name] [url]`新增新的远程仓库
+<a name="XsjH0"></a>
+## git pull
+```shell
+git pull [remote_name] [remote_branch:local_branch]
+# 其实pull指令就是fetch和merge指令的结合, 比如
+git pull origin main
+# 就相当于
+git fetch origin main
+git merge origin/main
+
+# 可以添加--rebase参数改为rebase代替默认的merge操作
+git pull --rebase origin main 
+```
+<a name="OZRl5"></a>
+## git tag
+`git tag`列出所有的tag<br />`git tag [tag_name]`创建新的tag在当前commit<br />`git tag [tag_name] [commit]`创建新的tag在指定commit<br />`git tag -d [tag_name]`删除某个本地tag
+<a name="TsN8F"></a>
+## git push
+`git push [remote] [tag]`提交指定tag<br />`git push [remote] --tags`提交所有的tag<br />`git push [remote] --delete [branch_name]`删除远程分支<br />`git push [remote] [branch_name]`上传本地指定分支到远程<br />`--force`强制推送<br />`--all`推送所有分支
+<a name="UvcFB"></a>
+## git reset
+功能很多, 几乎可以撤销一切操作
+```shell
+# 回滚一次/多次提交操作
+git reset HEAD~3  
+git reset HEAD^
+git reset [hash]
+# 还有子参数
+		--soft: 回退到某个版本，只回退了commit的信息，
+						不会恢复到index file一级。如果还要提交，直接commit即可；
+		--hard: 彻底回退到某个版本，本地的源码也会变为上一个版本的内容，
+						撤销的commit中所包含的更改被冲掉
+  	--keep: 只回退HEAD指针保留工作状态
+
+# 回滚 `add` 操作,, 注意和 `checkout` 丢弃的区别
+# 将修改后, 已经add到暂存区, 但还未commit的文件,
+# 可以用reset命令将这些文件回退到工作区
+git reset
+# 子命令
+	[--] [<pathspec>...]	# 回退单个文件或者多个文件
+
+```
+<a name="UYhVY"></a>
+## git revert
+回退到某个版本<br />和reset很像, 但是revert是新建一个commit, 将代码内容重新到要回到的版本, 然后提交到新的一个commit<br />revert前:<br />![revert之前](https://cdn-upyun-image.srv.ink/IMGbed/2022/12/22/LuqopW.jpg)<br />执行 `git revert HEAD` 之后, `C2'`的代码内容和`C1`完全相同,但是`C2‘`是一次完整的全新的commit<br />![revert之后](https://cdn-upyun-image.srv.ink/IMGbed/2022/12/22/yqRSkd.jpg)
+<a name="yEPM0"></a>
+## git status
+查看当前`工作区`状态
+<a name="pZBGO"></a>
+## git log
+查看当前仓库版本历史<br />`--stat`显示commit历史,并显示每次commit变更的文件<br />`-S`搜索提交历史<br />`--follow`显示某个文件的历史<br />`-p`显示某个文件相关的每一次diff<br />`-N`显示最后的N次提交<br />`--oneline`一行展示
+<a name="eaMEZ"></a>
+## git sortlog
+log的排序输出<br />`-c`按照提交者排序<br />`-n`根据每个作者的提交数量对输出进行排序<br />`-s`只显示提交次数, 不显示提交描述<br />`-e`显示电子邮件<br />`-w`换行输出
+<a name="v91Mr"></a>
+## git reflog
+显示最近的几次提交, 和 `git log -N`有点类似
+<a name="KL3Ck"></a>
+## git diff
+主要用于查看代码之间的差异<br />`直接执行`显示暂存区和工作区的diff差异<br />`diff --cached [name]`显示暂存区和上个commit的差异<br />`diff [commit]`显示当前工作区与指定commit的差异, 指定commit可以是tag HEAD 以及分支名<br />`diff [first-branch]...[second-branch]`显示两个commit之间的差异<br />`git diff --shortstat "@{0 day ago}"`显示你今天写了多少代码 23333
+<a name="i50K9"></a>
+## git show
+`show [tag]`查看tag信息<br />`show  [commit`查看某次提交的内容信息<br />`show --name-only [commit]`只显示某次提交有改变的文件<br />`show [commit]:[file]`查看某次提交的某个文件的内容

@@ -1,0 +1,76 @@
+---
+title: "记一次笔记本安装国内linux系统deepin,以及遇到的坑"
+description: "前言 这几天对mac os非常着迷，连着搞了好几天.结果引导clover中一直没有macos的安装盘。最后非但没有搞上高大上的mac系统，还格式化了我整个SSD………，好吧，，，可惜了我花了一个月时间配置好的arch linux……，还有w..."
+pubDate: "2018-11-26"
+createdAt: "2018-11-26 15:56:00"
+tags:
+  - "technology"
+updatedDate: "2018-11-26"
+updatedAt: "2018-11-26 21:40:19"
+---
+
+{/* migrated from Typecho: cid=81 | slug=deepin_install | source-categories=technology | merged-tags=technology */}
+
+## 前言
+这几天对mac os非常着迷，连着搞了好几天.结果引导clover中一直没有macos的安装盘。最后非但没有搞上高大上的mac系统，还格式化了我整个SSD………，好吧，，，可惜了我花了一个月时间配置好的arch linux……，还有win下的各种软件环境变量………。**我决定不再搞arch了！！！** 升级一下子某个软件整个桌面崩溃…***于是我还是回归deepin系统***
+
+##下载 制作安装盘
+去官网下载最新系统：[www.deepin.org/download/][1] 下载完别忘了对比文件md5
+然后找一个不小于16G的U盘，打开镜像包里面的制作安装盘的一个exe文件
+**这一部由于是在上课时用ipad写的草稿，所以没有图，这一步应该很简单**
+
+##安装
+安装也很简单的，不像**mac os**和**arch linux**那么变态
+新主板直接eufi引导到u盘然后跟着步骤安装
+老主板的话，emmmm，没有ssd是不建议安装的，，，推荐unubtu14.4吧 那个比较流畅一些，而且有x86版本，顺便提一句，最新的unubtu已经不在开发x86版本的了
+
+##第一次进入系统
+如果你是nv显卡的话，可能会卡deepin LOGO 解决方法如下:
+```
+1、安装完毕，卡在deepin处
+解决办法：开机选择deepin 不要按下`enter`键，应该按下`e`键,然后在倒数第二行类似于
+`linux /vmlinuz-4.15.0-29deepin-generic root=UUID=b66d8ffa-aed9-466c-bc12-6bb801e45901 ro splash quiet`的代码
+在quiet的后面空一格加上如下所示的代码：`acpi_osi=! acpi="windows 2009"`，然后按F10保存即可。这时会重新开始登录deepin系统，耐心等待进入桌面即可。
+```
+```
+2、卡在桌面转圈处，这时候已经可以确定是nv显卡不能被驱动了按照上面第一步的操作就可以正常进入桌面。。。但是是一次性的的，下次重启或者开机还是会卡，，，
+```
+这个时候我们需要更改nv驱动 1、打开`深度显卡驱动管理器`如图：
+![驱动][2]
+
+打开后如下图：
+![驱动管理器][3]
+
+这个时候我们有两种选择，1
+1是选择`大黄蜂方案`这种方案只默认驱动核心显卡。比较省电的方案
+2是`NV_PRIME方案`，这种方式只驱动nv独立显卡，对于对图形用户有较高要求的用户可以选择
+3是你也可以在grub引导里`splash quiet`代码后面写入`acpi_osi=! acpi="windows 2009"` **但是不推荐这种做法**
+4是切换时必须联网，切换完 重启即可恢复！
+
+##配置 grub （主要是为了好看）
+deepin默认的grub主题丑的一批，而且没1920*1080满分辨率。。。不爽*10086!!!
+首先确定你是自己写ｇｒｕｂ主题还是用别人的ｇｒｕｂ主题
+１、自己写的　哎算了　想必也是大佬
+２、首先去度娘上去找找自己喜欢的主题　
+下载下来放进｀/boot/grub/themes/｀中　注意：要以一个主题一个文件夹的形式存放
+接下来：
+```
+\#Written by com.deepin.daemon.Grub2    
+GRUB_BACKGROUND="/boot/grub/themes/my/background.png"       //背景图片　改为你自己主题文件夹即可
+GRUB_CMDLINE_LINUX=""
+GRUB_CMDLINE_LINUX_DEFAULT="splash quiet acpi_osi=! acpi_osi=\"Windows 2009\""  
+GRUB_DEFAULT=0                                                          //默认启动项目
+GRUB_DISTRIBUTOR="`/usr/bin/lsb_release -d -s 2>/dev/null || echo Deepin`"  
+GRUB_THEME=/boot/grub/themes/my/theme.txt       //主题配置　改为你自己主题文件夹即可
+GRUB_TIMEOUT=3　　　　　　　　　　　　　　　　　　　　//超时时间
+GRUB_GFXMODE="1920x1080"                         //分辨率
+```
+最后的效果如下：
+![ｇｒｕｂ！！][4]
+##
+
+
+  [1]: https://www.deepin.org/download/
+  [2]: https://i.loli.net/2018/11/26/5bfbec4b4086f.png
+  [3]: https://i.loli.net/2018/11/26/5bfbece8408b0.png
+  [4]: https://i.loli.net/2018/11/26/5bfbf74b10a5d.jpg

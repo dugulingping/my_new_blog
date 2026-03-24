@@ -1,0 +1,98 @@
+---
+title: "[WSL]win10下Ubuntu子系统解决使用不了system相关命令的问题"
+description: "先说结论 使用 service 命令代替 systemctl 相关命令，以下是自启动服务的操作方法 进入子系统中，创建并编辑文件: sudo nano /etc/init.wsl ,文件里写入需要开机启动的服务: shell ! /bin/..."
+pubDate: "2021-01-24"
+createdAt: "2021-01-24 00:41:00"
+tags:
+  - "Linux"
+  - "wsl"
+  - "wsl2"
+  - "Ubuntu"
+  - "win10"
+  - "systemctl"
+  - "自启动"
+  - "开机启动"
+  - "init-d"
+updatedDate: "2021-01-24"
+updatedAt: "2021-01-24 00:46:17"
+---
+
+{/* migrated from Typecho: cid=169 | slug=WSL2-Ubuntu | source-categories=Linux | source-tags=wsl,wsl2,Ubuntu,win10,systemctl,自启动,开机启动,init-d | merged-tags=Linux,wsl,wsl2,Ubuntu,win10,systemctl,自启动,开机启动,init-d */}
+
+## 先说结论
+
+使用`service`命令代替`systemctl`相关命令，以下是自启动服务的操作方法
+
+进入子系统中，创建并编辑文件:`sudo nano /etc/init.wsl`,文件里写入需要开机启动的服务:
+
+```shell
+#! /bin/sh
+/etc/init.d/supervisor start
+```
+
+然后给`init.wsl`加上x的执行权限:`sudo chmod +x /etc/init.wsl`
+
+随后在win10的Win+R运行输入`shell:startup`，在里面创建并编辑文件`linux-start.vbs`，文件内容为:
+
+```vb
+Set ws = WScript.CreateObject("WScript.Shell")        
+ws.run "wsl -d Ubuntu-20.04 -u root /etc/init.wsl"
+```
+
+上述文件保存退出后重启windows后生效。。。
+
+注意：使用`PowerShell`命令`wsl --shutdown`彻底关闭Linux子系统后，再如要再次开启子系统需要使用`wsl -d Ubuntu-20.04 -u root /etc/init.wsl`命令启动子系统，不然子系统中自启动服务不会工作。。。
+
+## 前言(第一个坑)
+
+这两天因为要写[行走中的代码][1]这篇文章，所以我安装了基于`WSL`的win10子系统`Ubuntu20.04`，在折腾`systemctl enable supervisor`时候报错`Synchronizing state of supervisor.service with SysV service script with /lib/systemd/systemd-sysv-install.`。下面开始着手解决这个问题。
+
+## 第二个坑
+
+上述说到`systemctl enable supervisor`命令报错，好嘛，既然行不通，那就按照报错提示中说的使用sysv命令，经过查询，和`systemctl edis/enable severName`具有一样功能的命令是`chkconfig serverName on/off`,好嘛，奥里给，干了！！！
+
+结果。。。。
+```shell
+$ sudo chkconfig supervisor on
+sudo: chkconfig: command not found
+```
+那这个坑怎么解决呢，这就要说到第三个坑（我直接好家伙）。
+
+## 第三个坑
+
+好嘛，再次经过一番搜索查询之后，得出结论是Ubuntu早在16.04就使用`sysv-rc-conf`命令代替了`chkconfig`，继续奥里给！！！
+
+结果。。。。
+```shell
+$ sudo sysv-rc-conf supervisor on
+sudo: sysv-rc-conf: command not found
+```
+
+## 第四个坑
+
+于是又是一顿程序员的日常操作之后，得出结论需要apt安装一下，继续奥里给！！！！
+
+## 第五个坑
+
+结果给我报错`E: Unable to locate package sysv-rc-conf (无法定位sysv-rc-conf软件包)`,欲哭无泪。。。我靠，这是为啥啊。。。。
+
+最后是在`/etc/apt/sources.list`文件末尾添加`deb http://archive.ubuntu.com/ubuntu/ trusty main universe restricted multiverse`(清华阿里云的源应该也行)，随后使用`$ sudo apt update`命令更新软件List，最后在终端输入下述命令即可解决！！！
+
+```shell 
+$ sudo apt update
+$ sudo apt install -y sysv-rc-conf
+$ sysv-rc-conf supervisor on
+```
+
+## 第六个坑
+
+使用`sysv-rc-conf supervisor on`来代替`systemctl enable supervisor`以实现开机服务自动启动功能~
+
+或者干脆在`/etc/rc.local`末尾添加一行`sudo /etc/init.d/supervisor start`,可恶啊，可恶啊，一开始我居然没想到。。。
+
+后来我重启了一次发现上述两种方法均没有生效，继续在网上搜索，在WSL2的文档中找到了解决办法，参见本文开头结论部分，hhhhhh
+
+windows真香（逃）
+
+
+  [1]: https://blog.icyuyan.net/web/vscode-online.html

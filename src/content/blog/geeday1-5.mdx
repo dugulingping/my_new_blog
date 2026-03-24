@@ -1,0 +1,233 @@
+---
+title: "Day1.5-构建基本框架"
+description: "构建自己的 Handler 接口 我们可以构建自己的 Handler 接口 对应关系, 如下: go type Engine struct{} func engine Engine ServeHTTP w http.ResponseWrit..."
+pubDate: "2023-02-04"
+createdAt: "2023-02-04 12:41:06"
+tags:
+  - "not-fond"
+---
+
+{/* migrated from Typecho: cid=179 | slug=geeDay1-5 | source-categories=not-fond | merged-tags=not-fond */}
+
+## 构建自己的 Handler 接口
+我们可以构建自己的 Handler 接口 对应关系, 如下:
+```go
+type Engine struct{}
+
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 对所有请求返回 hello go
+	_, _ = w.Write([]byte("hello go"))
+}
+func main() {
+	engine := new(Engine)
+	http.ListenAndServe(":8000", engine)
+}
+
+```
+这样我们相当于取代了`DefaultServeMux`, 自己实现了`serverHandler{c.server}.ServeHTTP(w, w.req)`中的符合了`Handler`接口的实现方式, 就等于说是, 我们用`Engine.ServeHTTP()`代替了`DefaultServeMux.ServeHTTP()`, 当然`DefaultServeMux`是结构`ServeMux`的一个实例, 也就是说我们自己写一个结构或者自定义的类型, 只要这个结构或者类型实现了 Handler 接口, 那么就可以代替掉默认的`DefaultServeMux`
+
+当然你也可以不用`DefaultServeMux`, 直接使用`ServeMux`自己创建一个实例, 如下:
+```go
+// 自定义ServeMux
+func main() {
+	mux := new(http.ServeMux)
+	mux.HandleFunc("/hello", func(writer http.ResponseWriter, request *http.Request) {
+		_, _ = writer.Write([]byte("Hello Go"))
+	})
+	_ = http.ListenAndServe(":8000", mux)
+}
+
+```
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/34762359/1675479327720-5a6523ad-9799-46e4-8a8f-0e634e30b493.png#averageHue=%232e2e2e&clientId=u93dc4561-3aba-4&from=paste&height=75&id=ua9565962&name=image.png&originHeight=150&originWidth=738&originalType=binary&ratio=1&rotation=0&showTitle=false&size=27660&status=done&style=none&taskId=u8e623823-8947-4397-8523-f5780289132&title=&width=369)
+这样实际上就还是走的`ServeMux.ServeHTTP()`方法, 但所用`ServeMux`实例不再是`DefaultServeMux`, 而是我们自己创建的`mux`实例.
+## 改造一下
+明白了只要实现了 Handler 接口,就能够自己自定义处理绑定函数和路由的关系之后, 我们可以稍微的改造一下我们自己的`Engine.ServeHTTP()`方法:
+```go
+type Engine struct{}
+
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	switch path {
+	case "/":
+		_, _ = w.Write([]byte("Hello Go"))
+	case "/gee":
+		_, _ = w.Write([]byte("Gee!!!"))
+	default:
+		_, _ = w.Write([]byte("天啊, 404啦!!!!"))
+	}
+}
+
+func main() {
+	engine := new(Engine)
+	http.ListenAndServe(":8000", engine)
+}
+```
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/34762359/1675480225607-b2a539a8-9a1c-4e62-92b2-5b1258ec41b1.png#averageHue=%232d2d2d&clientId=u93dc4561-3aba-4&from=paste&height=215&id=u1b5bb300&name=image.png&originHeight=430&originWidth=714&originalType=binary&ratio=1&rotation=0&showTitle=false&size=73847&status=done&style=none&taskId=u4dae70b6-edda-4321-95d0-f62feedcaf0&title=&width=357)
+## 封装
+look! 这样就可以自定义我们的请求了, 但是还有个问题, 就是每增加一个路由就需要写一个 case, 很不方便, 所以我们可以封装一下, 增加一些直观的好用的方法. 如下:
+```go
+//文件: /day1/base3/gee/gee.go
+package gee
+// HandlerFunc 路由匹配到后的具体函数
+type HandlerFunc func(w http.ResponseWriter, r *http.Request)
+
+// Engine 路由表 实现了ServeHTTP接口
+type Engine struct {
+	router map[string]HandlerFunc
+}
+
+// ServeHTTP 实现了ServeHTTP接口
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 获取连接的请求方式和路径
+	key := r.Method + "-" + r.URL.Path
+	// 对比和匹配路由
+	if handler, ok := engine.router[key]; ok {
+		handler(w, r)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = fmt.Fprintf(w, "404 NOT FOUND: %s", r.URL)
+	}
+}
+
+// Run 启动服务
+func (engine *Engine) Run(addr string) (err error) {
+	return http.ListenAndServe(addr, engine)
+}
+
+// 封装路由规则和具体的处理函数
+// addRoute 添加路由规则
+func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
+	// key 的内容为, 请求方式-Path
+    key := method + "-" + pattern
+    // 映射对应关系
+	engine.router[key] = handler
+}
+
+// GET 添加GET路由规则
+func (engine *Engine) GET(pattern string, handler HandlerFunc) {
+	engine.addRoute("GET", pattern, handler)
+}
+
+// POST 添加POST路由规则
+func (engine *Engine) POST(pattern string, handler HandlerFunc) {
+	engine.addRoute("POST", pattern, handler)
+}
+
+// New 实例化Engine
+func New() *Engine {
+	return &Engine{router: make(map[string]HandlerFunc)}
+}
+```
+类型 `HandlerFunc`我抄袭了官方 http 包里的, 目的是存储路由执行函数的对应引用实例, 算是一种封装? 不管啦, 能用就行!
+
+在 `Engine`结构中, 我新增了一个成员(也可以说成是字段, 属性, Field, 无所谓, 都是一个意思)router, map 类型, key存放的是路由Path, Value中存放的是对应的`HandlerFunc`, 也就是对应每个路由的唯一的一个执行函数.
+
+封装了 addRoute, 是不对外导出的方法, 只能在本包gee中使用, addRoute中对`Engine.router`这个map 的Key有了规定, 规定以`请求方式-Path`的形式来存储 key, Value对应的HandlerFunc则直接存入 
+
+封装了 GET, POST 这两个方法, 直接将自身的`请求方式`还有`请求Path`和`绑定的处理函数`直接向上传递到`addRoute`方法, 只需要调用框架的这个 GET 和 POST 方法即可将某一个路由添加到路由map
+
+封装了 Run 方法, 用于启动 Http 服务器的端口监听和服务, 接收一个端口并自动将我们自己的 Engine 实例传入`Http.ListenAndServe`函数
+
+最后封装了New方法, 用于创建新的Engine实例, 其实这里可以加个判断搞成单例模式~ 
+## 入口
+我们先来看看主 main.go都写了啥, 然后在研究路由怎么匹配的吧~
+```go
+package main
+
+import (
+	"fmt"
+	"gee"
+	"net/http"
+)
+
+func main() {
+	// 创建 Engine 实例
+	r := gee.New()
+	// 增加一个 GET 路由, path 为 /
+	r.GET("/", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Hello World"))
+	})
+	// 增加一个 GET 路由, path 为 /hello
+	r.GET("/hello", func(w http.ResponseWriter, r *http.Request) {
+		for k, v := range r.Header {
+			_, _ = fmt.Fprintf(w, "Header[%q] = %q", k, v)
+		}
+	})
+	// 增加一个 POST 路由, path 为 /login
+	r.POST("/login", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = fmt.Fprintf(w, "POST login")
+	})
+	// 创建服务端口的监听并开启 Http 服务
+	err := r.Run(":9000")
+	if err != nil {
+		return
+	}
+}
+
+```
+要使 gee 有效我们得用 go.mod 重定向 gee 包的位置:
+```go
+module git.srv.ink/7DaysGee/Day1/base3
+
+go 1.19
+
+require (
+    gee v0.0.1
+)
+
+replace (
+    gee => ./gee
+)
+```
+## 路由匹配
+结合上面的内容一起看, 应该很容易理解, GET 由于自封装了请求方式, 所以只需要 path 和对应的执行函数即可, 这些东西都会一起向上传递, 最后到 addRoute 方法, 这里说一下这三个路由的 key 到底是啥. 其实在`addRoute`方法里面 Println 一下就很清楚明白了.
+```go
+// 封装路由规则和具体的处理函数
+// addRoute 添加路由规则
+func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
+	key := method + "-" + pattern
+	engine.router[key] = handler
+	// 打印对应的 key
+	fmt.Println("请求方式:", method, pattern, " 对应: ", key)
+}
+```
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/34762359/1675483704986-fa245020-2916-4771-89de-2c9881ae7e37.png#averageHue=%23353535&clientId=u93dc4561-3aba-4&from=paste&height=85&id=u990c7b3b&name=image.png&originHeight=170&originWidth=764&originalType=binary&ratio=1&rotation=0&showTitle=false&size=24734&status=done&style=none&taskId=u52d468c8-e547-4ff2-84c3-16bf2966433&title=&width=382)
+现在我们知道了key里面的结构是什么样的, 那我们设计路由的匹配就会容易的很多了, 我们先来看代码吧!
+```go
+// ServeHTTP 实现了ServeHTTP接口
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 获取连接的请求方式和路径
+	key := r.Method + "-" + r.URL.Path
+	// 对比和匹配路由
+	if handler, ok := engine.router[key]; ok {
+		handler(w, r)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = fmt.Fprintf(w, "404 NOT FOUND: %s", r.URL)
+	}
+}
+```
+可以看到我们这里也先从浏览器的请求信息中先拿到`请求方式`和`Path`, 组成我们上面说到的 key, 然后去拿这个 key 去和我们 Engine 里的路由 map 里的 key 去对比, 对比中了, 就执行对应中的 HandlerFunc 函数, 对比不中就写入 404, 然后完事!
+我们其实可以看看每一次请求的 key 是什么样子的, 只需要在`ServeHTTP`方法中添加Println就行!!
+```go
+// ServeHTTP 实现了ServeHTTP接口
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 获取连接的请求方式和路径
+	key := r.Method + "-" + r.URL.Path
+	// 对比和匹配路由
+	handler, ok := engine.router[key]
+	if ok {
+		handler(w, r)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = fmt.Fprintf(w, "404 NOT FOUND: %s", r.URL)
+	}
+	// 这里我们加上时间,容易理解
+	log.Println("请求方式:", r.Method, r.URL.Path, "对应:", key, "是否对应上:", ok)
+}
+```
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/34762359/1675484882201-0e924ac5-6bee-4959-b731-27a50a4c326a.png#averageHue=%2331302d&clientId=u93dc4561-3aba-4&from=paste&height=251&id=u5247d8b2&name=image.png&originHeight=502&originWidth=1114&originalType=binary&ratio=1&rotation=0&showTitle=false&size=127095&status=done&style=none&taskId=u874700c0-fd20-4f4b-b9f0-07f3a8228e8&title=&width=557)
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/34762359/1675484904896-fe6ad057-c4bd-4cbe-be22-ce13bfd6d8ff.png#averageHue=%23363636&clientId=u93dc4561-3aba-4&from=paste&height=182&id=ua1340255&name=image.png&originHeight=364&originWidth=1234&originalType=binary&ratio=1&rotation=0&showTitle=false&size=75228&status=done&style=none&taskId=ud0e20bae-76b9-4542-81b4-038229bcb1c&title=&width=617)
+可以看到最后一个`GET-/abc`在我们的路由表中并没有添加, 所以没有匹配到. 输出的也是 404.
+
+## end!!!

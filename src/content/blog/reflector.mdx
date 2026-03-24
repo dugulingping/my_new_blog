@@ -1,0 +1,58 @@
+---
+title: "使用reflector自动更改Pacman的软件源"
+description: "我们都知道arch-linux的安装过程是需要网络连接的，有时候国内某些时候的网络实在是不怎么样，经常pacstrap的时候5.2kb/s 使用reflector即可帮你解决一切烦恼哦~ 安装 在最新的Arch-linux的安装Live镜像..."
+pubDate: "2021-11-18"
+createdAt: "2021-11-18 02:16:14"
+tags:
+  - "Linux"
+  - "linux"
+  - "arch"
+  - "archlinux"
+  - "reflector"
+  - "mirror"
+  - "换源"
+---
+
+{/* migrated from Typecho: cid=176 | slug=reflector | source-categories=Linux | source-tags=linux,arch,archlinux,reflector,mirror,换源 | merged-tags=Linux,linux,arch,archlinux,reflector,mirror,换源 */}
+
+我们都知道arch-linux的安装过程是需要网络连接的，有时候国内某些时候的网络实在是不怎么样，经常pacstrap的时候5.2kb/s
+
+使用reflector即可帮你解决一切烦恼哦~
+
+## 安装
+
+在最新的Arch-linux的安装Live镜像中自带了reflector，直接使用即可，在安装好系统之后使用pacman来安装reflector
+
+```shell
+pacman -S reflector
+
+```
+
+## 使用
+
+在Live环境下联网后直接输入如下指令即可拉取下载速度最快的国内https镜像
+```shell
+reflector --country China --age 120 --sort rate --protocol https --save /etc/pacman.d/mirrorlist
+```
+
+### 解释一下参数
+
+`--country`: 指定国家和区域
+`--age`: 指定最后更新/同步时间，可以过滤掉某些已经停止维护的镜像地址, 单位: 小时
+`--sort`: 指定排序方式, 可选`{age,rate,country,score,delay}`, 分别为`{最后更新, 下载速度, 镜像分数, 延迟}`
+`--protocol`: 指定http或https协议
+`--save`: 将结果覆写到文件, 一般都是`/etc/pacman.d/mirrorlist`, 请提前备份旧的Mirrorlist
+`--threads`: 指定多线程数量，不可大于cpu总线程数量
+`--list-countries`: 列出国家代码和镜像数量
+
+还有一些其他参数, 具体请使用`reflector --help`查看帮助
+
+
+## 参考
+
+[Reflector (简体中文) - ArchWiki][1]
+
+[1] : https://wiki.archlinux.org/title/Reflector_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+
+
+  [1]: https://wiki.archlinux.org/title/Reflector_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)

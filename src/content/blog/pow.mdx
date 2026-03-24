@@ -1,0 +1,151 @@
+---
+title: "pow函数以及math.h的一些坑"
+description: "起源 任何问题都有起源不是？这道问题其实是我刚学C语言的时候就自己遇到过。加上最近好多人问我类似于这种问题，于是决定写篇blog来解释一下。。。 问题描述 主要是C语言函数库中main.h中的pow ; 等函数有这个问题 问题的重现性和随机..."
+pubDate: "2018-12-11"
+createdAt: "2018-12-11 23:50:00"
+tags:
+  - "c-cpp"
+updatedDate: "2018-12-11"
+updatedAt: "2018-12-11 23:55:31"
+---
+
+{/* migrated from Typecho: cid=94 | slug=pow | source-categories=c-cpp | merged-tags=c-cpp */}
+
+## 起源
+
+任何问题都有起源不是？这道问题其实是我刚学C语言的时候就自己遇到过。加上最近好多人问我类似于这种问题，于是决定写篇blog来解释一下。。。
+
+## 问题描述
+
+主要是C语言函数库中main.h中的pow(); 等函数有这个问题 
+问题的重现性和随机性还有得到的结果可能和你的编译器和cpu架构有关
+下面是一个栗子：
+
+```c
+#include<stdio.h>
+#include<math.h>
+int main()
+{
+    int i = 2;
+    printf("%d\n",(int)pow(10,2));
+    printf("%d\n",(int)pow(10,i));
+    return 0;
+}
+```
+
+将上面代码在 windows10，linux，Android下运行，得到结果如下：
+![三系统的结果](https://i.loli.net/2018/12/11/5c0fca5d13174.jpg)
+
+### `咦 为啥windowds的结果会不一样呢`
+
+#### 先看看pow()函数的原型定义
+
+```c
+double pow  (double base, double exponent);
+```
+
+可以看到这个函数定义的 参数 和 返回值 都是 double 类型
+
+这就意味着我们用int类型参与运算是需要强制转换～
+
+#### 接下来让我们来分析一下下～
+
+- 首先 我们得知道三大平台所对应的编译器是什么(win的cfree5.0用的的clang编译器，Android的C4roid 和 我的Deepin系统用的都是gcc编译器)
+- 其实 gcc和clang是两种完全不同的编译器，实现方式，编译步骤甚至都不一样，他们各有各的优势和劣势～，这里就不解释了~~(其实是解释不了！！！)~~
+- 最后 我们研究一下子这两编译器生成的中间代码
+
+## 原来是编译器的锅！！！！！
+
+我们看下中间代码~~(篇幅有限就不贴了)~~看到 ：
+
+`Android和deepin的gcc编译器生成的代码把int变量的i值在调用pow函数前强制转换为double类型参与运算`于是
+
+```c
+int i = 2;
+printf("%d\n",(int)pow(10,i));
+//就变成了
+printf("%d\n",(int)pow(10,(double)i));
+//最终就成了
+printf("%d\n",(int)pow(10,2.0));
+```
+
+`而反观Windows下的Clang编译器 他没有把int的i变成double值，于是……`
+
+```c
+int i = 2;
+printf("%d\n",(int)pow(10,i));
+//编译器不知道i是个什么玩意，就会按double的形式把i的二进制数据取出来参与运算，，，
+//所以i的值就不知道是啥了，，，运气好的话值可能不会差太远
+//如果运气不好，，，那完蛋了，失之毫厘谬以千里也
+```
+
+而常数2为啥不会出错呢 
+
+```c
+printf("%d\n",(int)pow(10,2));
+//这是因为两种编译器都会自动转换常数的类型
+//就相当于
+printf("%d\n",(int)pow(10.0,2.0));
+//所以两个常数都是以double类型参与运算的
+//而在遇到 %d 时 他会把之前准备好的(int)强制转换的值给printf 所以不会出错咯～
+```
+
+## 解决办法
+
+说了这么半天，那到底咋解决呢！！！貌似有好几种方法 哈哈哈
+
+### 方法一
+
+```c
+//涉及整数的幂运算、阶乘等等你就不要使用pow(),自己写个函数随便起个名 不要用double就行了
+```
+
+### 方法二
+
+```c
+//全程使用double运算 最后强制转换为int类型再输出什么的
+//比如刚刚上面的代码可以写成这样
+double i = 2.0;
+int aut1 = (int)pow(10.0,i);
+int aut2 = (int)pow(10.0,2.0);
+printf("%d\n",aut1);
+printf("%d\n",aut2;
+```
+
+### 方法三
+
+```c
+//早日跳坑吧
+//程序员没有女友
+//有很大风险秃头
+//钢铁直男
+//But 
+//I love programming
+//I love programming BUG
+//I love you
+//咳咳，我也爱读沈从文的《边城》
+```
+
+## 总结
+
+其实不止pow函数，让我们看看math.h中的其他的函数原型
+
+```c
+//三角函数
+double sin(double);//正弦
+double cos(double);//余弦
+double tan(double);//正切
+//反三角函数
+double asin (double); //结果介于[-PI/2,PI/2]
+double acos (double); //结果介于[0,PI]
+double atan (double); //反正切（主值），结果介于[-PI/2,PI/2]
+double atan2 (double,double); //反正切（整圆值），结果介于[-PI,PI]
+//绝对值
+int abs(int i); //求整型的绝对值
+double fabs (double); //求实型的绝对值
+double cabs(struct complex znum); //求复数的绝对值
+```
+
+上面这些函数大部分是用的double作为参数和返回值的，所以都有可能出现今天我们谈论的莫名其妙的bug，哈哈哈
+
+### 尽量避免发生类型强制转换的情况发生，即使无法避免，也要写清楚(类型)强制转换，后面维护也会轻松不少～～～

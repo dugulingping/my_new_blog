@@ -1,0 +1,139 @@
+---
+title: "linux下vs code c/c++环境的配置"
+description: "准备工作 对 你猜对了 首先你需要一台装了 linux 的pc 下面是我的电脑配置和linux发行版本 ! 我的电脑配置和linux发行版本 1 ---------- 下载 && 安装 去官网下载追星的vs code 下载下来直接是deb的..."
+pubDate: "2018-12-09"
+createdAt: "2018-12-09 22:30:00"
+tags:
+  - "technology"
+updatedDate: "2018-12-13"
+updatedAt: "2018-12-13 23:53:12"
+---
+
+{/* migrated from Typecho: cid=89 | slug=vscode-c-cpp-install | source-categories=technology | merged-tags=technology */}
+
+##准备工作
+对 你猜对了 首先你需要一台装了`linux`的pc
+下面是我的电脑配置和linux发行版本
+![我的电脑配置和linux发行版本][1]
+
+----------
+## 下载 && 安装
+去官网下载追星的vs code 下载下来直接是deb的安装包
+下砸完后直接dpkg安装就完事了
+也可去自带的应用商店下载 安装vs code……
+
+##配置
+终于到喜闻乐见的配置环节了！
+先在你的电脑执行 `sudo apt-get install -y gcc g++ gdb`
+~~如果你有需要你还可以装个clang~~ `sudo apt-get install -y clang`
+### next 让我们打开vs code
+先安装中文包(如图所示）嘻嘻嘻～然后如图所示建
+![中文包][2]
+
+然后如图所示建一个工作目录
+![建立工作模式][3]
+
+接下来安装必要的依赖插件。。。（还是看图吧）
+![插件][4]
+
+接下来emmmmmmmm 写一个hellow_orld.c
+```c
+#include <stdio.h>
+int main(void)
+{
+    printf("Coder Gad\n");
+    return 0;
+}
+```
+点右上角的小三角运行下 如果你前面没有配置错误的话 应该可以看到结果（看图大雾）
+![小三角运行][5]
+
+----------
+##配置调试
+这时你可以按下`F5`启动调试 会弹出一个框框 选择 `C++(GDB/LLDB)`
+###删掉里面全部内容，替换成下面的内容
+```cpp
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    //参考 ： https://blog.csdn.net/qq_34347375/article/details/80851417
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",                                 //配置名称，会在启动配置的下拉菜单中显示
+            "type": "cppdbg",                                       //配置类型，只能为cppdbg
+            "request": "launch",                                    //请求类型，可以为launch或attach
+            "program": "${fileDirname}/${fileBasenameNoExtension}.out",//这里要和tasks.json中生成的可执行文件一致 //将要调试的程序的路径
+            "args": [],                                             //调试时传递给程序的命令行参数
+            "stopAtEntry": false,                                   //设为true程序会暂停在入口处
+            "cwd": "${workspaceFolder}",                            //调试程序时的工作目录
+            "environment": [],                                      //环境变量
+            "externalConsole": false,//注意 这里是大坑！               //调试时是否显示控制台窗口,此处为坑 设置为true不会出现调试窗口
+            "MIMode": "gdb",                                        //指定连接的调试器，可以为gdb或lldb
+            "miDebuggerPath": "/usr/bin/gdb",                       //gdb路径
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build"                                //调试开始前执行的任务，一般为编译程序
+        }
+    ]
+}
+
+```
+###再次按下`F5` 会受到一个`找不到任务build`的错误的攻击
+我们只需要点击 `创建任务`按下`enter`创建一个默认的任务
+然后用以下的内容替换掉原来的就OK
+```cpp
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    // 参考 ： https://blog.csdn.net/qq_34347375/article/details/80851417
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build", //在launch.json文件中有用到
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-o",
+                "-g",
+                "${fileDirname}/${fileBasenameNoExtension}.out",
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        }
+    ]
+}
+
+```
+再次按下`F5`就可以调试啦
+## 完
+
+参考：[https://go.microsoft.com/fwlink/?LinkId=733558][6]
+参考：[https://blog.csdn.net/qq_34347375/article/details/80851417][7]
+感谢！
+
+
+  [1]: https://i.loli.net/2018/12/09/5c0d27cf976ee.png
+  [2]: https://i.loli.net/2018/12/09/5c0d2c8eaab39.png
+  [3]: https://i.loli.net/2018/12/09/5c0d2bc571727.png
+  [4]: https://i.loli.net/2018/12/09/5c0d2f07db4a8.png
+  [5]: https://i.loli.net/2018/12/09/5c0d30d41273e.png
+  [6]: https://go.microsoft.com/fwlink/?LinkId=733558
+  [7]: https://blog.csdn.net/qq_34347375/article/details/80851417

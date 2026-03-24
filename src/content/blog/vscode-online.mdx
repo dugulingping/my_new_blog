@@ -1,0 +1,152 @@
+---
+title: "[行走中的代码]在服务器上搭建在线vs code"
+description: "前言 前几天搞了个小服务器，带宽只有3M，除了git服务端和frp服务端之外实在找不到其他用处。。。。而这两个服务已经在其他服务器搭建过了，所以想着有没有现成的在线代码运行环境，于是发现微软搞了这么个骚玩意，挺有意思的~ 玩玩~ 准备工作..."
+pubDate: "2021-01-24"
+createdAt: "2021-01-24 00:26:25"
+tags:
+  - "web"
+  - "Linux"
+  - "vscode"
+  - "code-server"
+  - "Nginx"
+  - "反向代理"
+  - "反代"
+  - "vscode-online"
+---
+
+{/* migrated from Typecho: cid=168 | slug=vscode-online | source-categories=web,Linux | source-tags=vscode,code-server,Nginx,反向代理,反代,vscode-online | merged-tags=web,Linux,vscode,code-server,Nginx,反向代理,反代,vscode-online */}
+
+## 前言
+
+前几天搞了个小服务器，带宽只有3M，除了git服务端和frp服务端之外实在找不到其他用处。。。。而这两个服务已经在其他服务器搭建过了，所以想着有没有现成的在线代码运行环境，于是发现微软搞了这么个骚玩意，挺有意思的~ 玩玩~
+
+## 准备工作
+
+1. 首先保证服务器 22 80 443 8081 端口是开启的(不只是BT面板的，还有云服务器的安全组也要放行)
+2. 项目GitHub地址: https://github.com/cdr/code-server
+3. 下载最新相应的版本到服务器，https://github.com/cdr/code-server/releases/latest ,这里建议下载`tar.gz`的压缩包
+4. 也可以使用官方的sh来进行安装，这里就不展开了，sh地址:https://github.com/cdr/code-server/blob/v3.8.0/README.md
+
+## 搭建 & 测试
+
+1. 先去下载 & 解压 & 重命名文件夹
+``` shell
+    $ wget https://github.com/cdr/code-server/releases/download/v3.8.0/code-server-3.8.0-linux-amd64.tar.gz
+    $ tar zxvf code-server-3.8.0-linux-amd64.tar.gz
+    $ mv code-server-3.8.0-linux-amd64 code-server
+    $ cd code-sever
+```
+2. 首次运行，设置密码
+``` shell
+    #首先输入下面的指令来运行一下code-sever
+    $ ./code-server --port 8081 --host 0.0.0.0
+```
+3. 打开浏览器输入`http://severIP:8081/`，会看到如下，此时证明你已经完成50%了
+![1.png](https://i.loli.net/2021/01/22/6zhj5bxkpyNLqK4.png)
+4. 返回终端按下Ctrl+c，先停止服务，然后去更改code-sever的web鉴权密码
+``` shell
+    $ nano ~/.config/code-server/config.yaml
+```
+5. 将里面的内容更改为如下:
+``` yml
+    bind-addr: 127.0.0.1:8081
+    auth: password
+    password: hanpi@vscode
+    cert: false
+```
+6. 然后再次启动code-sever服务端，输入密码`hanpi@vscode`后您应该可以看到如下界面
+``` shell
+    $ ./code-server --port 8081 --host 0.0.0.0
+```
+![2.png](https://i.loli.net/2021/01/22/4mj8AzQe1yroGKf.png)
+
+## 使用supervisor在服务器后台运行
+
+使用`yum`或者`apt`命令安装`supervisor`,向`/etc/supervisor.d`目录中创建并编辑新的任务task文件，名为`vscode-sever.ini`,内容为：
+```yml
+[program:vscode-online]
+directory=/home/dugulingping/code-server
+#脚本执行命令
+command=/home/dugulingping/code-server/code-server --port 8081 --host 0.0.0.0
+
+#supervisor启动的时候是否随着同时启动，默认True
+autostart=true
+#当程序exit的时候，这个program不会自动重启,默认unexpected
+autorestart=false
+#这个选项是子进程启动多少秒之后，此时状态如果是running，则我们认为启动成功了。默认值为1
+startsecs=5
+
+#脚本运行的用户身份
+user = dugulingping
+#日志输出
+stderr_logfile=/tmp/vscode-online_stderr.log
+stdout_logfile=/tmp/vscode-online_stdout.log
+#把stderr重定向到stdout，默认 false
+redirect_stderr = true
+#stdout日志文件大小，默认 50MB
+stdout_logfile_maxbytes = 20MB
+#stdout日志文件备份数
+stdout_logfile_backups = 20
+```
+
+随后使用`$ sudo supervisorctl update`和`$ sudo supervisorctl reload`命令重载配置，并使用`$ sudo systemctl enable supervisor`实现开机自启动supervisor服务
+
+此时重启服务器再次打开浏览器`http://severIP:8081/`，出现login界面表示开机自启动配置成功
+
+## 使用Nginx搭建http反向代理实现ssl和隐藏端口
+
+此次使用在一台服务器上运行的宝塔面板进行设置Nginx的反向代理
+
+在BT面板新建一个站点，SSL正常配置，选择强制跳转Https
+
+在反代界面新建一个反代规则，目标URL我这里填入:`http://localhost:8081`,代理名称随便填一个，就可以点击保存了
+
+在这条规则上点击配置文件按钮，写入替换如下内容
+```yml
+#PROXY-START/
+location  ~* \.(php|jsp|cgi|asp|aspx)$
+{
+    proxy_pass http://localhost:8081;
+    proxy_set_header Host localhost;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header REMOTE-HOST $remote_addr;
+    proxy_set_header Host $host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection upgrade;
+    proxy_set_header Accept-Encoding gzip;
+}
+location /
+{
+    proxy_pass http://localhost:8081;
+    proxy_set_header Host localhost;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header REMOTE-HOST $remote_addr;
+    proxy_set_header Host $host;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection upgrade;
+    proxy_set_header Accept-Encoding gzip;
+      
+    
+    add_header X-Cache $upstream_cache_status;
+    
+    #Set Nginx Cache
+    
+    	add_header Cache-Control no-cache;
+    expires 12h;
+}
+
+#PROXY-END/
+```
+
+随后重载Nginx配置文件，打开浏览器输入你的站点域名，能显示Login页面即是成功的！好耶！！！
+
+## 必要的安全性设置
+
+如果这个服务部署在生产力环境，请把鉴权密码设置的复杂一些，并在安全组设置不让8081端口的流量出站，还有请不要分发auth鉴权密码，目前版本的code-server终端通过sudo su 等命令能够轻松提权，必要情况下请使用Nginx的目录保护功能二次鉴权~
+
+## 必要的功能性设置(就是插件:)逃)
+
+基本大多数的插件都可以支持了，具体参照如下图片：
+![3.png](https://i.loli.net/2021/01/24/Zd6TmhPaEsXyi7Y.png)

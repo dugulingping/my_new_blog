@@ -1,0 +1,47 @@
+---
+title: "【sdut-1207】圆柱体的计算"
+description: "sdut 1207- 圆柱体的计算 原题地址： https://acm.sdut.edu.cn/onlinejudge2/index.php/Home/Index/problemdetail/pid/1207.html 1 这道题纯属套公式..."
+pubDate: "2018-09-26"
+createdAt: "2018-09-26 00:54:21"
+tags:
+  - "oj"
+updatedDate: "2018-09-26"
+updatedAt: "2018-09-26 00:57:22"
+---
+
+{/* migrated from Typecho: cid=78 | slug=sdut-1207 | source-categories=oj | merged-tags=oj */}
+
+##sdut_1207->圆柱体的计算
+
+原题地址：[https://acm.sdut.edu.cn/onlinejudge2/index.php/Home/Index/problemdetail/pid/1207.html][1]
+
+这道题纯属套公式 没啥技术含量~ 
+
+可能也就看你格式输出是否掌握了吧~
+
+###代码君奉上：
+```
+#include <stdio.h>
+
+const float PI = 3.1415926;
+
+int main(void)
+{
+	int r; //半径
+	int h; //高
+	scanf("%d %d",&r,&h);
+	printf("%.2f ",(float)(r*2)*PI);
+	printf("%.2f ",(float)r*r*PI);
+	printf("%.2f ",(float)(r*2)*PI*h);
+	printf("%.2f ",(float)r*r*PI*h);
+	return 0;
+}
+//底面周长（直径×π）
+//底面积：πr2（π×半径×半径）
+//侧面积：2πrh（底面周长×高）
+//体积 V = sh 
+
+```
+
+
+  [1]: https://acm.sdut.edu.cn/onlinejudge2/index.php/Home/Index/problemdetail/pid/1207.html

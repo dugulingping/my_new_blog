@@ -1,0 +1,150 @@
+---
+title: "数据结构(二) - 双向链表"
+description: "这次我就写了最基本的创建、插入、删除、遍历这四个基本的 函数 啥也不说了 上代码 c include include include include typedef struct linklist{ struct linklist last..."
+pubDate: "2019-01-26"
+createdAt: "2019-01-26 15:13:00"
+tags:
+  - "c-cpp"
+  - "数据结构"
+  - "链表"
+  - "双向链表"
+  - "c-c"
+updatedDate: "2019-01-26"
+updatedAt: "2019-01-26 15:14:50"
+---
+
+{/* migrated from Typecho: cid=136 | slug=Doubly-linked-list | source-categories=c-cpp | source-tags=数据结构,链表,双向链表,c-c | merged-tags=c-cpp,数据结构,链表,双向链表,c-c */}
+
+这次我就写了最基本的创建、插入、删除、遍历这四个基本的 函数
+
+啥也不说了 上代码
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <malloc.h>
+
+typedef struct linklist{
+	struct linklist * lastnode;
+	int data;
+	struct linklist * nextnode;
+} link;
+
+bool create_link(link * head, int times);
+void foreach_link(link * head); 
+bool insert_element(link * head, int n, int num);
+bool delete_element(link * head, int n);
+
+int main(int argc, char *argv[])
+{
+	link * list = (link *)malloc(sizeof(link));
+	create_link(list,5);
+	printf("\n");
+	foreach_link(list);
+	printf("\n个数：%d\n",list->data); 
+	insert_element(list, 5,13);
+	printf("\n");
+	foreach_link(list);
+	printf("\n个数：%d\n",list->data); 
+	delete_element(list,5);
+	printf("\n个数：%d\n",list->data); 
+	foreach_link(list); 
+	delete_element(list,0);
+	printf("\n个数：%d\n",list->data);
+	foreach_link(list);
+	return 0;
+}
+//建立链表 
+bool create_link(link * head, int times)
+{
+	/*if(!head){
+		printf("head has point\n");
+		return false;
+	}*/
+	head->lastnode = NULL;
+	head->nextnode = NULL;
+	link * last = head;
+	int temp_num;
+	for(int i=0;i<times;i++){
+		scanf("%d",&temp_num);
+		link * temp = (link *) malloc(sizeof(link));
+		temp->lastnode = last;
+		temp->nextnode = NULL; 
+		if(i == 0){
+			head->nextnode = temp;
+			temp->data = temp_num;
+		}
+		else{
+			last->nextnode = temp;
+			temp->data = temp_num;
+		}
+		last = temp;
+	}
+	head->data = times;
+	return true;
+}
+//遍历链表
+void foreach_link(link * head)
+{
+	link * node = head->nextnode;
+	while(node)
+	{
+		printf("%d ",node->data);
+		node = node->nextnode;
+	}
+}
+//插入元素(之后) 下标为准 
+bool insert_element(link * head, int n, int num)
+{
+	link * temp = (link *)malloc(sizeof(link));
+	link * last = head; 
+	temp->data = num;
+	for(int i = 0;i < n; i++){
+		last = last->nextnode;
+	}
+	if(n == head->data){
+		last->nextnode=temp;
+		temp->lastnode=last;
+		head->data++;
+		printf("seccess %d insert %d",n,num);
+		return true;
+	}
+	else{
+		last->nextnode->lastnode = temp;
+		temp->nextnode = last->nextnode;
+		temp->lastnode = last;
+		last->nextnode =  temp;
+		head->data++;
+		printf("seccess %d insert %d",n,num);
+		return true;
+	}
+	return false;
+} 
+//删除元素(之后) 下表为准 
+bool delete_element(link * head, int n)
+{
+	link * last = head;
+	link * del;
+	for(int i = 0; i<n; i++){
+		last = last->nextnode;
+	}
+	if(n == (head->data-1)){
+		//free(last->nextnode);
+		last->nextnode = NULL;
+		head->data--;
+		printf("seccess %d delete",n);
+		return true;
+	}
+	else{
+		del = last->nextnode;
+		last->nextnode = del->nextnode;
+		del->nextnode->lastnode = last;
+		//free(del);
+		head->data--; 
+		printf("seccess %d delete",n);
+		return true; 
+	}
+	return false;
+} 
+```

@@ -1,0 +1,58 @@
+---
+title: "给Typecho加上emoji表情"
+description: "首先Emoji是一种非常非常流行的Unicode小表情~ 几乎是支持Unicode字符集的程序都是支持显示Unicode表情的~ 我们就来说说如何给自己的typecho博客支持Emoji小表情~ 首先Emoji在Unicode位是于 \\u1..."
+pubDate: "2019-04-24"
+createdAt: "2019-04-24 22:46:29"
+tags:
+  - "web"
+  - "博客"
+  - "emoji"
+  - "typecho"
+updatedDate: "2019-04-24"
+updatedAt: "2019-04-24 22:47:05"
+---
+
+{/* migrated from Typecho: cid=147 | slug=147 | source-categories=web | source-tags=博客,emoji,typecho | merged-tags=web,博客,emoji,typecho */}
+
+首先Emoji是一种非常非常流行的Unicode小表情~ 几乎是支持Unicode字符集的程序都是支持显示Unicode表情的~
+
+我们就来说说如何给自己的typecho博客支持Emoji小表情~
+
+首先Emoji在Unicode位是于`\u1F601-\u1F64F`区段的字符。这个显然超过了目前常用的`UTF-8`字符集的编码范围`\u0000-\uFFF`F。在 MySQL 中，`UTF-8`只支持最多 3 个字节，而 emoji 是 4 个字节。
+
+所以我们只需要更改数据库编码和相应的数据库链接编码就可以啦~
+
+## 开始操作：
+
+1. 进入PhpMyAdmin，选择你博客所在的数据库，修改编码为`utf8mb4_unicode_ci`
+
+2. 选定数据库，执行以下sql代码：
+
+   ```sql
+   alter table typecho_comments convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   alter table typecho_contents convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   alter table typecho_fields convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   alter table typecho_metas convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   alter table typecho_options convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   alter table typecho_relationships convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   alter table typecho_users convert to character set utf8mb4 collate utf8mb4_unicode_ci;
+   ```
+
+3. 修改typecho程序数据库配置文件~
+
+   ```php
+   $db->addServer(array (
+     'host'      =>  localhost,
+     'user'      =>  'youruser',
+     'password'  =>  'yourpassword',
+     'charset'   =>  'utf8', //修改这一行,修改为utf8mb4
+     'port'      =>  3306,
+     'database'  =>  'yourdatabase'
+   ), Typecho_Db::READ | Typecho_Db::WRITE);
+   ```
+
+   
+
+最后最后，表情来一波
+
+? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ☺️ ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ☹️ ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?

@@ -1,0 +1,57 @@
+---
+title: "【sdut-2543】 整除"
+description: "sdut- 2543 整除 这道题用传统方法根本解不出来 总是超时 都坑死我了 其实这道题是运用了容斥原理来解决问题 代码有注释应该可读性不错 代码原理图在最下边 参考：容斥原理： https://blog.csdn.net/dl96245..."
+pubDate: "2018-09-19"
+createdAt: "2018-09-19 01:27:00"
+tags:
+  - "oj"
+updatedDate: "2018-09-19"
+updatedAt: "2018-09-19 01:30:19"
+---
+
+{/* migrated from Typecho: cid=69 | slug=sdut-2543 | source-categories=oj | merged-tags=oj */}
+
+## sdut->2543 整除
+这道题用传统方法根本解不出来 总是超时 都坑死我了
+
+其实这道题是运用了容斥原理来解决问题
+
+代码有注释应该可读性不错
+
+代码原理图在最下边
+
+参考：容斥原理：[https://blog.csdn.net/dl962454/article/details/76736149][1]
+
+###以下是代码
+```c
+#include <stdio.h>
+ 
+int main()
+{
+	//求1到n范围内能被5，6，8整除的数的个数。（0<n<10^7）
+    int a,b,c,ab,bc,ac,abc,n,jg;
+    while(~scanf("%d",&n))
+    {
+        a = n / 5; //a
+        b = n / 6; //b
+        c = n / 8; //c
+        ab = n / 30; //a 交 b 
+        ac = n / 40; //a 交 c 
+        bc = n / 24; //b 交 c 
+        abc = n / 120; //a交b交c 
+        jg = a + b + c - ab - bc - ac + abc; //a + b + c - ab - ac - bc + abc 
+        //printf("%d + %d + %d  - %d  - %d - %d + %d = %d\n",a,b,c,ab,ac,bc,abc,jg);
+        printf("%d\n",jg);
+    }
+    return 0;
+}
+/*
+三个集合的容斥关系 = |A∪B∪C| = |A|+|B|+|C| - |A∩B| - |B∩C| - |C∩A| + |A∩B∩C|
+*/
+
+```
+![原理图sdut-2543][2]
+
+
+  [1]: https://blog.csdn.net/dl962454/article/details/76736149
+  [2]: https://i.loli.net/2018/09/19/5ba1353d0409c.png

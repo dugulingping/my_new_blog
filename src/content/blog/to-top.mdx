@@ -1,0 +1,140 @@
+---
+title: "返回顶部浮动小按钮"
+description: "我这段时间把文章底部重构一下代码，删除了底部的分享，返回顶部的小链接，等于是大变化了~ 我就寻思着，没有返回顶部不方便啊，想要回到顶部还得用滚轮转几圈？ 算了，花时间搞一个浮动的返回顶部小按钮把~ 需求 博客本身的返回顶部是在你把文章看完了..."
+pubDate: "2019-01-25"
+createdAt: "2019-01-25 20:23:00"
+tags:
+  - "web"
+  - "返回顶部"
+  - "博客"
+updatedDate: "2019-01-25"
+updatedAt: "2019-01-25 20:29:32"
+---
+
+{/* migrated from Typecho: cid=135 | slug=to-top | source-categories=web | source-tags=web,返回顶部,博客 | merged-tags=web,返回顶部,博客 */}
+
+我这段时间把文章底部重构一下代码，删除了底部的分享，返回顶部的小链接，等于是大变化了~
+
+我就寻思着，没有返回顶部不方便啊，想要回到顶部还得用滚轮转几圈？
+
+算了，花时间搞一个浮动的返回顶部小按钮把~
+
+### 需求
+
+> 博客本身的返回顶部是在你把文章看完了 才会出现的 
+>
+> 这样子做的 **缺点**
+>
+> 1. 固定位置，相对不方便
+> 2. 占用底部宝贵的空间!
+> 3. 不美观
+
+好了确定完需求了，开搞！
+
+### 首先选图标~
+
+~~我先是看的png图片 觉得不太好， 贼鸡儿耗流量 还拖慢网站打开速度~~   **pass**
+
+~~然后看了看ico图片 想了想，好像同上~~    **pass**
+
+~~又看了看SVG文件图片 觉得太鸡儿难维护了~~    **pass**
+
+**最后看了看css的 Font Awesome 提供的图标库 这个好啊  纯css就可以用~**
+
+### 然后实现
+
+Font Awesome这个库的图标用起来超级方便，请参照[用法文档](http://www.fontawesome.com.cn/faicons/) 
+
+在模板的`footer.php`在`</body>`前面加上如下代码
+
+```html
+<!---如果你已经引入了Font Awesome库，请删除下一行代码-->
+<link  rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.0.3/css/font-awesome.min.css">
+<!--返回顶部-->
+<!--撤销了缩进，需要请自行加缩进-->
+<div id="return-top" class="back-top">
+	<a data-scroll href="#site-head"> <i class="fa fa-lg fa-chevron-circle-up fa-4x" id="img"></i></a>
+</div>
+```
+
+html代码有了。但是你刷新页面，你会看到它会显示在页面最底下~ 接下来我们加上css代码，让按钮能浮动起来~
+
+在你的某个css文件里面写入如下代码
+
+```css
+.back-top{
+    position:fixed;
+	right:10px;
+	bottom:20px;
+    border-radius:15px;
+    cursor:pointer;
+    display:none;
+}
+```
+
+然后刷新页面，你就可以看到浮动的返回顶部按钮啦~
+
+但是美中不足是浮动按钮一直存在~ 我想让页面下拉一段距离后再显示。这个怎么实现呢？
+
+用`JavaScript`控制`css`的`display属性`即可实现
+
+打开你的某个js文件，在里面写入如下JavaScript代码
+
+```javascript
+//返回顶部
+//控制按钮的显示和消失
+$(window).scroll(function() {
+    if ($(window).scrollTop() > 300) {
+        $('#return-top').fadeIn(300);
+    } else {
+        $('#return-top').fadeOut(200);
+    }
+})
+```
+
+然后重新刷新页面就ok啦~
+
+大功告成！！！ 接下来来个完整版的代码合集（如下代码直接复制到footer.php文件即可使用）
+
+```html
+<!--引入图标依赖-->
+<link  rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.0.3/css/font-awesome.min.css">
+<!--返回顶部-->
+<!--撤销了缩进，需要请自行加缩进-->
+<div id="return-top" class="back-top">
+	<a data-scroll href="#site-head"> <i class="fa fa-lg fa-chevron-circle-up fa-4x" id="img"></i></a>
+</div>
+<style type="text/css">
+.back-top{
+    position:fixed;
+	right:10px;
+	bottom:20px;
+    border-radius:15px;
+    cursor:pointer;
+    display:none;
+}
+</style>
+<script type="text/javascript">
+//返回顶部
+//控制按钮的显示和消失
+$(window).scroll(function() {
+    if ($(window).scrollTop() > 300) {
+        $('#return-top').fadeIn(300);
+    } else {
+        $('#return-top').fadeOut(200);
+    }
+})
+</script>
+```
+
+### 效果图
+
+喜闻乐见的环节~
+
+隐藏小按钮
+
+![2019年1月25日1.jpg](https://i.loli.net/2019/01/25/5c4afb062c6e2.jpg)
+
+下拉一段距离后显示按钮
+
+![2019年1月25日2.jpg](https://i.loli.net/2019/01/25/5c4afb0634574.jpg)

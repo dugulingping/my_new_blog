@@ -1,0 +1,50 @@
+---
+title: "【sdut-3750】bLue的大写L"
+description: "sdut - bLue的大写L 题目链接： https://acm.sdut.edu.cn/onlinejudge2/index.php/Home/Index/problemdetail/pid/3750.html 1 同样是没啥技术含量的..."
+pubDate: "2018-09-21"
+createdAt: "2018-09-21 02:02:00"
+tags:
+  - "oj"
+updatedDate: "2018-09-21"
+updatedAt: "2018-09-21 02:10:35"
+---
+
+{/* migrated from Typecho: cid=76 | slug=sdut-3750 | source-categories=oj | merged-tags=oj */}
+
+##sdut -> bLue的大写L
+题目链接：[https://acm.sdut.edu.cn/onlinejudge2/index.php/Home/Index/problemdetail/pid/3750.html][1]
+
+同样是没啥技术含量的题目~
+
+逻辑很简单 for和if嵌套即可做出来 5分钟搞定~
+
+代码：
+```
+#include <stdio.h>
+
+int main(void)
+{
+	char ch; 
+	int n;
+	while(~scanf("%d",&n))
+	{
+		ch = 'A';
+		for(int i = 1;i < n;i++)
+		{
+			printf("%c\n",ch);
+			ch++;
+		}
+		for(int i = 0;i < n;i++)
+		{
+			if(ch == 'Z'+1)
+				ch = 'A';
+			printf("%c",ch);
+			ch++;
+		}
+		n = 0;
+		printf("\n\n");
+	}
+	return 0;
+}
+```
+  [1]: https://acm.sdut.edu.cn/onlinejudge2/index.php/Home/Index/problemdetail/pid/3750.html

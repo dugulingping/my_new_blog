@@ -1,0 +1,53 @@
+---
+title: "【nyoj_0096】n-1位数"
+description: "nyoj - n-1位数 http://nyoj.top/problem/96 1 这道题应该很简单 属于很简单的入门题 哈哈哈代码写的很滑稽，凑合看吧。。。。 下面是代码 include int main void { int av,ga..."
+pubDate: "2018-09-19"
+createdAt: "2018-09-19 20:59:31"
+tags:
+  - "oj"
+updatedDate: "2018-09-19"
+updatedAt: "2018-09-19 21:02:43"
+---
+
+{/* migrated from Typecho: cid=75 | slug=nyoj-0096 | source-categories=oj | merged-tags=oj */}
+
+##nyoj -> n-1位数
+[http://nyoj.top/problem/96][1]
+
+这道题应该很简单
+
+属于很简单的入门题
+
+哈哈哈代码写的很滑稽，凑合看吧。。。。
+
+下面是代码
+```
+#include <stdio.h>
+
+int main(void)
+{
+	int av,gay,github,gv,ci;
+	scanf("%d",&ci);
+	for(int i = 0;i<ci;i++)
+	{
+		github = 0, gay = 0,gv = 1;
+		scanf("%d",&av);
+		gay = av;
+		while(gay != 0)
+		{
+			gay /= 10;
+			github++;
+		}
+		for(int j = 1;j<github;j++)
+			gv *= 10;
+		printf("%d\n",av%gv);
+			
+	}
+	
+	
+	return 0;
+}
+
+```
+
+  [1]: http://nyoj.top/problem/96

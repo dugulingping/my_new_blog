@@ -1,0 +1,214 @@
+---
+title: "数据结构 (一) - 链表"
+description: "哎 学才疏浅啊 1天多时间才写完整个链表 我用cfree5.0的工程文件夹打了个包，用cfree工程可以直接打开…… 蓝奏云: https://www.lanzous.com/i2kfgib 1 单文件版 Ubuntu Pastebin地址..."
+pubDate: "2018-12-09"
+createdAt: "2018-12-09 16:00:00"
+tags:
+  - "c-cpp"
+updatedDate: "2018-12-14"
+updatedAt: "2018-12-14 00:08:51"
+---
+
+{/* migrated from Typecho: cid=88 | slug=linked_list | source-categories=c-cpp | merged-tags=c-cpp */}
+
+## 哎 学才疏浅啊 1天多时间才写完整个链表
+我用cfree5.0的工程文件夹打了个包，用cfree工程可以直接打开……
+**蓝奏云:[https://www.lanzous.com/i2kfgib][1]**
+单文件版
+** Ubuntu Pastebin地址： [https://paste.ubuntu.com/p/69vzT8pfQS/][2]**
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <malloc.h>
+typedef struct linklist {
+	int data;
+	struct linklist * nextlink;
+} link ;
+link * creat_link(link * HEAD, int n);		//创建链表
+link * new_creat_link(link * HEAD, int n);	//优化过的建链表
+link * search_link(link * HEAD, int s);		//搜索
+void foreach_link(link * HEAD);				//遍历、 
+bool insert_link(link * HEAD,int address,int num);	//插入数据
+bool delete_link(link * HEAD,int address); 	//删除数据
+bool search_delete_link(link * HEAD,int num);//搜索删除数据 
+bool change_link(link * HEAD, int address, int num);	//改变 元素data
+
+int main(int argc, char *argv[])
+{	
+	int times = 5;
+	link * linklt;
+	linklt = creat_link(linklt, times);
+	//printf("%p\n",linklt);
+ 	foreach_link(linklt);
+ 	//printf("%d\n",search_link(linklt,4)->data);
+ 	insert_link(linklt,0,789);
+ 	insert_link(linklt,3,1246);
+ 	foreach_link(linklt);
+ 	delete_link(linklt,4);
+ 	foreach_link(linklt);
+ 	delete_link(linklt,0);
+ 	foreach_link(linklt);
+ 	search_delete_link(linklt,3);
+ 	foreach_link(linklt);
+ 	search_delete_link(linklt,1);
+ 	foreach_link(linklt);
+ 	change_link(linklt,0,1246);
+ 	foreach_link(linklt);
+ 	change_link(linklt,2,789);
+ 	foreach_link(linklt);
+	return 0;
+}
+
+link * creat_link(link * HEAD, int n)
+{
+	int num;
+	HEAD = NULL;
+ 	for(int i = 0; i<n; i++)
+	{
+		link * p = (link *)malloc(sizeof(link));
+		scanf("%d",&num);
+		p->data = num;
+		p->nextlink = NULL;
+		link * last = HEAD;
+		if(last){
+			while(last -> nextlink){
+				last = last ->nextlink ;
+			}
+			last->nextlink = p;
+		}else{
+			HEAD = p ; 
+		}
+	}
+	printf("%d\n",n);
+	return HEAD;
+}
+
+link * new_creat_link(link * HEAD, int n)
+{
+	int num;
+	HEAD = NULL;
+	link * last = NULL;
+ 	for(int i = 0; i<n; i++)
+	{
+		link * p = (link *)malloc(sizeof(link));
+		scanf("%d",&num);
+		p->data = num;
+		p->nextlink = NULL;
+		if(i == 0)
+			last = HEAD = p;		//第一个元素 
+		else{
+			last->nextlink = p;		//上一个的nextlink 指向新的p 
+			last = p;		//保存上一个 
+		}
+	}
+	printf("%d\n",n);
+	return HEAD; 
+}
+
+link* search_link(link * HEAD, int s)
+{
+	link * last = HEAD;
+	while(last){
+		if(last->data == s)
+			return last;
+		last = last->nextlink;
+	}
+	last = NULL;
+	return last;
+}
+
+void foreach_link(link * HEAD)
+{
+	link * last = HEAD;
+	do{
+		printf("%d ",last->data);
+		last = last->nextlink;
+	} 
+	while(last);
+	printf("\n");
+}
+
+bool insert_link(link * HEAD,int address,int num)		//插入某个元素  
+{
+	if(address == 0){
+		link * p = (link *)malloc(sizeof(link));
+		link * head_next = HEAD->nextlink;
+	 	int head_data = HEAD->data;
+		HEAD->data = num,HEAD->nextlink = p;		// 头元素值改为传入的值，头指针->next == p的地址 
+		p->data = head_data,p->nextlink = head_next;	//吧p插入头指针后面
+		return true; 
+	}
+	link * wait_swap = HEAD;
+	while((address--)&&(wait_swap = wait_swap->nextlink)) ;
+	link * p = (link *)malloc(sizeof(link));                                                         
+	link * swap_next = wait_swap->nextlink;
+	wait_swap->nextlink = p;		// last元素值改为传入的值，last->next == p的地址 
+	p->data = num, p->nextlink = swap_next;
+	return true;
+}
+
+bool delete_link(link * HEAD,int address)		//删除元素  
+{
+	//要保留头指针保持不变 只能把第1个 元素删除 让HEAD->nextlink == 第2个元素地址 HEAD->data=第一个元素的data 
+	if(address == 0){
+		link * first = (HEAD->nextlink->nextlink);
+		int data = (HEAD->nextlink->data);
+		link * del = (HEAD->nextlink);
+		free(del);
+		HEAD->data = data,HEAD->nextlink = first;
+		return true; 
+	}
+	address--;
+	link * last = HEAD;
+	while((address--)&&(last = last->nextlink)) ;		//取得 被删除 上一个元素地址     
+	link * del_p = last->nextlink;
+	last->nextlink = del_p->nextlink;
+	free(del_p);
+	return true;
+}
+
+bool search_delete_link(link * HEAD,int num)	//搜索删除数据
+{
+	link * del;
+	link * last;
+	if(HEAD->data == num){
+		link * first = (HEAD->nextlink->nextlink);
+		int data = (HEAD->nextlink->data);
+	 	del = (HEAD->nextlink);
+		free(del);
+		HEAD->data = data, HEAD->nextlink = first;
+		return true; 	
+	}
+	del = HEAD->nextlink;
+	last = HEAD;
+	while(del){
+		if(del->data == num){
+			last->nextlink = del->nextlink;
+			free(del);
+			return true;
+		}
+		last = del; 
+		del = del->nextlink;
+	}
+	last = NULL;
+	return last;
+} 
+
+bool change_link(link * HEAD, int address, int num)
+{
+	link * last = HEAD;
+	while((address--)&&(last = last->nextlink)) ;
+	if(last){
+		last->data = num;
+		return true;
+	}else{
+		return false;	//address 很可能太大 整个链表溢出; 
+	}
+}
+
+```
+
+
+  [1]: https://www.lanzous.com/i2kfgib
+  [2]: https://paste.ubuntu.com/p/69vzT8pfQS/

@@ -1,0 +1,76 @@
+---
+title: "树莓派开机指南(无显示器)"
+description: "我的树莓派的内存卡不幸GG了,遂淘宝新购一张... 像我这种穷鬼连键盘都买不起,所以没有显示器... 下载 最新的系统 http://downloads.raspberrypi.org/raspbian latest ...用 SD For..."
+pubDate: "2019-03-09"
+createdAt: "2019-03-09 19:15:51"
+tags:
+  - "raspberry"
+updatedDate: "2019-03-09"
+updatedAt: "2019-03-09 19:17:02"
+---
+
+{/* migrated from Typecho: cid=143 | slug=raspberry-start-guide | source-categories=raspberry | merged-tags=raspberry */}
+
+我的树莓派的内存卡不幸GG了,遂淘宝新购一张...
+
+像我这种穷鬼连键盘都买不起,所以没有显示器...
+
+下载[最新的系统](http://downloads.raspberrypi.org/raspbian_latest)...用[SD Formatter 4.0 for SD/SDHC/SDXC](https://www.sdcard.org/chs/downloads/formatter_4/eula_windows/SDCardFormatterv5_WinEN.zip)格式化sd卡,然后用[Win32DiskImager v0.9.zip](http://sourceforge.net/projects/win32diskimager/files/Archive/win32diskimager-v0.9-binary.zip/download)来刷写系统
+
+之后进入sd卡的BOOT分区(一般为可见),新建一个名为`ssh`的文件,用途是为了开机时默认开启ssh服务
+
+然后再在同目录下新建一个`wpa_supplicant.conf` 文件,用[Notepad++](https://notepad-plus-plus.org/download/)或者其他的文件编辑器打开写入wifi配置, 示例如下:(请自行去除注释)
+
+```shell
+#ssid:网络的ssid
+#psk:密码
+#priority:连接优先级，数字越大优先级越高（不可以是负数）
+#scan_ssid:连接隐藏WiFi时需要指定该值为1
+country=CN
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+ 
+network={
+ssid="WiFi-A"
+psk="12345678"
+key_mgmt=WPA-PSK
+priority=1
+}
+ 
+network={
+ssid="WiFi-B"
+psk="12345678"
+key_mgmt=WPA-PSK
+priority=2
+scan_ssid=1
+}
+#如果你的 WiFi 没有密码
+network={
+ssid="你的无线网络名称（ssid）"
+key_mgmt=NONE
+}
+#如果你的 WiFi 使用WEP加密
+network={
+ssid="你的无线网络名称（ssid）"
+key_mgmt=NONE
+wep_key0="你的wifi密码"
+}
+#如果你的 WiFi 使用WPA/WPA2加密
+network={
+ssid="你的无线网络名称（ssid）"
+key_mgmt=WPA-PSK
+psk="你的wifi密码"
+}
+```
+
+保存 推出sd卡
+
+完事之后把sd插进树莓派中, 开机.....
+
+你可以在你的路由器或者win热点管理器中看到你的树莓派的IP地址
+
+用minGW或者PUTTY或者其他ssh工具连接树莓派(默认用户名是pi 密码是raspberry)
+
+用`sudo apt install-y xrdp`来安装rdp服务 之后你就可以用windows自带的`远程桌面连接`连接到树莓派桌面
+
+用`sudo raspi-config`打开树莓派的命令行设置选择Interfacing Options -> VNC -> Yes, 输入y确定安装, 之后使用[RealVNC Viewer](https://www.realvnc.com/en/connect/download/viewer/)连接树莓派桌面~

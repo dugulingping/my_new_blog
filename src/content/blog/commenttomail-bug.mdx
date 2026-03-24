@@ -1,0 +1,74 @@
+---
+title: "Typeco中的CommentToMail插件数据库查询失败的解决方案"
+description: "我擦他奶奶的，我就说博客为啥大半年没有人评论~ 原来是BUG导致评论不了~ 在这里还是多谢 @jieyaomonster https://jieyaomonster.cn/ 大佬发现了这个bug~ bug描述 在装了 CommentToMa..."
+pubDate: "2019-01-08"
+createdAt: "2019-01-08 03:00:00"
+tags:
+  - "php"
+updatedDate: "2019-01-08"
+updatedAt: "2019-01-08 03:05:10"
+---
+
+{/* migrated from Typecho: cid=122 | slug=CommentToMail_bug | source-categories=php | merged-tags=php */}
+
+我擦他奶奶的，我就说博客为啥大半年没有人评论~ 原来是BUG导致评论不了~
+
+
+
+
+
+
+在这里还是多谢 [@jieyaomonster](https://jieyaomonster.cn/) 大佬发现了这个bug~
+
+## bug描述
+
+在装了 CommentToMail 插件 4.1.1 版本的Typecho博客上评论的话要么没有反应，要么出现`Database Query Error`  错误，如下图：
+
+![Database Query Error](https://i.loli.net/2019/01/08/5c3393bb67af4.jpg)
+
+而且有几乎100%的复现率
+
+## 解决
+
+看了看插件源码~几经周转找到了BUG代码
+
+在`\usr\plugins\CommentToMail`文件夹中的`Plugin.php`文件的 `248行`, 代码如下
+
+```php
+// 添加至队列
+$cfg = (object)$cfg;
+$db = Typecho_Db::get();
+$prefix = $db->getPrefix();
+$id = $db->query(
+      $db->insert($prefix.'mail')->rows(array(
+      'content' => base64_encode(serialize($cfg)),
+      'sent' => false
+       ))
+  );
+```
+
+冷静分析了一下…… 发现好像是typecho的Db类中的insert()方法返回的对象实例不能被query()方法执行查询
+
+想了想，决定使用传统方法：使用sql语句的方法传参给query()方法执行查询。虽然不如对象实例快，字符串拼接也费时间，但是我低头看了看时间`02点16分`我的天，明天还有课呢！！！！！！！
+
+飞快地改了代码，测试，通过！睡觉觉~~~
+
+改进代码：
+
+```php
+// 添加至队列
+$cfg = (object)$cfg;
+$db = Typecho_Db::get();
+$prefix = $db->getPrefix().'mail';
+$content = base64_encode(serialize($cfg));
+//采用字符串拼接的方式写出sql语句，再交给query()方法执行查询
+$sql = "INSERT INTO `$prefix`(`content`, `sent`) VALUES ('$content',false);";
+$id = $db->query($sql);
+
+```
+
+总结明天写吧 困死本喵瞄了~~~
+
+## 修改后的插件打包~
+
+本地！：[CommentToMail-v4.1.1-revision.zip](https://blog.icyuyan.net/usr/plugins/CommentToMail-v4.1.1-revision.zip)

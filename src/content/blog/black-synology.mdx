@@ -1,0 +1,147 @@
+---
+title: "[Nas折腾记]黑群晖"
+description: "前段时间就一直一直在下载电影看，当时手里有一个500G和一个1T的笔记本机械硬盘，勉强够用吧。后来电影下满了，就得删一些，在下一些。麻烦的要死，刚好又在家，于是就想自己组个nas玩。说干就干，于是就看了半个多月，最后决定还是入了矿渣“蜜獾超..."
+pubDate: "2021-04-06"
+createdAt: "2021-04-06 01:31:40"
+tags:
+  - "technology"
+  - "Linux"
+  - "life"
+---
+
+{/* migrated from Typecho: cid=175 | slug=Black_Synology | source-categories=technology,Linux,life | merged-tags=technology,Linux,life */}
+
+前段时间就一直一直在下载电影看，当时手里有一个500G和一个1T的笔记本机械硬盘，勉强够用吧。后来电影下满了，就得删一些，在下一些。麻烦的要死，刚好又在家，于是就想自己组个nas玩。说干就干，于是就看了半个多月，最后决定还是入了矿渣“蜜獾超存”，这个机子是6盘位机箱。cpu都是J900，主板可能根据版本不一样会有不同。我买的是最钙的版本，群晖下只认4盘的准系统，同时也不带内存和SSD，350快不包邮，邮费是到付的，快递送过来的时候我付了39元，还是蛮贵的。机子的做工真的不错，挺有分量的。
+
+同时我在京东买入了8T的企业盘，希捷银河新8T那个。。花了我1260元，真的贵。。。由于我是要存电影为主。重要数据我都会离线异地备份的。所以我没有买两块盘做Raid1，打算用8T这一块硬盘单独存电影，另外两块笔记本硬盘组成JBOD用来装一些不是很重要的冷数据。
+
+其实机器买回来我是不打算装黑裙，但是我发现Unraid无法实现我的需求，而且折腾成本相对大一点。最后还是投送黑裙的怀抱，真香啊~~
+
+## 安装
+
+这里直接参考张大妈阿文菌的教程:[https://post.smzdm.com/p/andr83k3/](https://post.smzdm.com/p/andr83k3/) ,只不过我把他教程中推荐的3617，DSM:6.1.7换成了DS918+, DSM: 6.21， 主要是我想玩一下硬件转码。
+
+DS918安装教程和3617的一毛一样，我这里还是放出阿文菌的教程:[https://post.smzdm.com/p/ar0v2on7/](https://post.smzdm.com/p/ar0v2on7/)
+
+另外，我在屏幕直连的那个画面里加了一句"Hello World!"
+
+![Hello World.jpg](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/Hello%20World.jpg)
+
+## 数据迁移
+
+由于之前的那两个盘是NTFS格式的，so在群辉上不能直接挂载，google了一下, 把SATA模式改为eSATA就可以让群晖在系统里面识别成外接硬盘，群晖系统外接硬盘是可以挂载出NTFS的。
+
+网上好多教程写的不是很好，我也是翻了好多篇才理解的，我还是觉定要自己写一下。备忘~
+
+首先打开群晖的"存储空间管理员"这个套件，最底下有硬盘信息，把鼠标移到小方块上面可以看到硬盘编号，如下图:
+
+![diskInfo.jpg](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/diskInfo.jpg)
+
+把你已经使用的硬盘，未使用的硬盘，缓存盘可用插槽的数量加一起的总插槽数用记事本记下来，顺便记一下你要更改的磁盘编号，这里为磁盘2和磁盘4，然后登录ssh(具体方法请Google，很简单，不在赘述)，执行`sudo vi /etc.defaults/synoinfo.conf`,按下回车之后会让你输入密码，你就输入你登陆DSM的密码就行。
+
+找到这个文件的`esataportcfg`和`internalportcfg`字段的配置，把后面0x后面的东西复制到记事本，我这里分别为`esataportcfg="0x0"`和`internalportcfg="0xffff"`
+
+用进制转换工具转换为2进制(工具:[https://tool.oschina.net/hexconvert](https://tool.oschina.net/hexconvert))，把不足你的总插槽数的前面补0 如图：
+
+![HEX](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/HEX.jpg)
+
+然后从右往左，从右往左开始数数字，从右往左第一个就是1号盘，2号就是2号盘。第一行0代表关闭esata，1代表打开
+
+这里我们要修改的是2和4号盘，所以就是把2号位和4号位的0改为1。
+
+这里注意，两个参数要保证同步修改，2号盘如果打开了eSATA那就得对应把下面的SATA的关闭
+
+修改完成如图：
+![afterfix](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/after_fix.jpg)
+
+然后用进制转换工具再转会16进制，如图：
+![ToHEX](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/ToHEX.jpg)
+
+最后把这两个16进制的数字替换到刚刚那个文件的`esataportcfg`和`internalportcfg`字段，修改后为: `esataportcfg="0xa"`和`internalportcfg="0xfff5"`, :wq保存屏退出文件,重新启动群晖，点开`File Station`即可看到你的硬盘成功以外接的形式被挂载。
+
+当你的为文件被成功转移到新硬盘之后，就可以改回来，然后当成正常硬盘使用。
+
+## 洗白 + 开启硬件转码
+
+其实是没必要洗白的。因为我就是单纯当个文件共享服务器来玩，但为啥我还要洗白呢，因为我想折腾啊，哈哈哈哈！其次想看看这颗J1900极限是什么性能~
+
+半洗白其实很好搞的，有三种方法~
+
+1. 淘宝花15大洋买一个现成的SN码
+2. 虚拟DSM
+3. 群晖在线官方的DSM
+
+接下来我一个一个说
+
+首先淘宝买一个，这个没什么好说的，同时这是最保险的办法。能用钱买到的东西就不要折磨自己受罪了~
+
+虚拟DSM，这个以前是在Docker这个套件里面有个DDSM的功能，不过我安装的版本较新，点进Docker里面根本没有DDSM这个功能，后来还是google救了我一命，原来新版本的虚拟DSM这个功能移动到了`Virtual Machine Manager`这个套件。具体方法我这里说个步骤把，不说具体怎么操作了，这个套件就和你玩VMware一样一样的。
+
+1. 安装`Virtual Machine Manager`套件
+2. 映像->新增->从Synology下载Virtual DSM-xxxxx 安装文件->选择存储空间->应用
+3. 虚拟机->新增->Synology Virtual DSM->选择存储空间->选择cpu内存->网络->权限->应用
+4. 进入Virtual DSM之后控制面板里记住SN和MAC地址
+5. 替换到物理机即可半洗白成功
+6. 替换方法请百度，我懒得写了
+
+群晖在线官方的DSM，这个方法我没试过，不过好像网上有人成功过。具体办法就是在[https://demo.synology.com/zh-tw/dsm](https://demo.synology.com/zh-tw/dsm)这个网址排队在线体验，进去之后把SN码和MAC地址记下来替换到自己的机器~
+
+### jellyfin开启硬件转码
+
+第一步先安装Dockers套件，然后因为Docker HUB服务器在国外导致镜像老是下载失败，所以要先替换国内的docker镜像。
+
+具体方法是，在注册表设置里面编辑第一个，启用注册表镜像然后把"http://hub-mirror.c.163.com"填进去，然后登录ssh终端，输入`sudo vi /var/packages/Docker/etc/dockerd.json`整理一下，如下图，最后输入命令`sudo synoservice --restart pkgctl-Docker`重启这个docker套件就可以了。
+
+具体的安装方法请参照[https://wp.gxnas.com/4912.html](https://wp.gxnas.com/4912.html)和[https://post.smzdm.com/p/a6lnxg3g/](https://post.smzdm.com/p/a6lnxg3g/),对我要再次感谢阿文菌的教程。
+
+不过这个jellyfin我目前是没啥用，等过段时间分享给群友看吧。
+
+## 使用Docker重新安装Resilio Sync
+
+为啥要重新安装呢，套件中心的Resilio Sync不好用吗？我来告诉你答案！在J1900这个cpu上确实不！好！用！！！
+
+下载慢不算，还占用资源及其的高cpu能给我占用一半，内存2G随便没
+
+所以就打算搞一下docker版本的Resilio Sync看看表现怎么样
+
+Let·s Go！
+
+在Docker的注册表里面直接下载Resilio/Sync这个镜像，下载完成后点启动，然后在容器里面停止掉这个容器，点编辑，参照下图的配置
+
+![SYNC1](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/sync1.jpg)
+
+![SYNC2](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/sync2.jpg)
+
+![SYNC3](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/sync3.jpg)
+
+完事之后启动容器，点击桌面上的快捷方式就可以了。
+
+当时我发现还是占用奇高。。。算了，索性在不使用的时候关闭容器好了！
+
+## 更改正确的cpu信息显示
+
+![CPUInfo_a](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/CPUInfo_a.jpg)
+
+可以看到我的CPU是J1900，但是系统信息里面显示是J3455，天哪我那用得起这么好的CPU呢，决定把他改为正常的J1900。
+
+首先下载[https://github.com/FOXBI/ch_cpuinfo](https://github.com/FOXBI/ch_cpuinfo)里面的2.2.1版本，把tar里面的`ch_cpuinfo`文件解压出来，上传到群晖的任意目录里面，然后登上SSH，执行此文件，执行方法就是cd到存放此文件的目录`sudo ./ch_cpuinfo`就可以啦，如果提示没有权限，请执行`sudo chmod +x ./ch_cpuinfo`
+
+完成之后重启群晖，或者注销在在登陆就行啦
+
+![cpuinfo_b](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/CPUInfo_b.jpg)
+
+## 建立软连接到DLNA串流目录中
+
+由于SMB共享必须要输入账号和密码，于是我就想到了群晖的`媒体服务器`套件，看看能不能建立软连接到/Video文件夹下。
+
+最开始试了 ln -s 和 cp -s 但是ln建立的软连接在我的电视盒子上识别不到，而cp -s建立的硬链接不知为啥又要耗费很多的空间。
+
+还是在无意中试了试 `mount --bind`命令，哇塞，果然可以，在群晖的文件管理和我的电视盒子上面都可以完美的访问和查看数据~
+
+关于`mount --bind`与`ln -s`的区别，请看这个知乎回答[https://www.zhihu.com/question/21535469](https://www.zhihu.com/question/21535469)
+
+接下去只需要编辑`/etc/rc.local`开机挂载就行啦，例如像我这样。
+
+![MountBind](https://cdn.tx.shanghai.icyuyan.net/blog/blog_img/群晖/MountBind.jpg)
+
+#### 未完待续。。。。

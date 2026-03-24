@@ -1,0 +1,80 @@
+---
+title: "数据结构(三) - 堆栈(线性实现)"
+description: "数据结构 三 - 堆栈 线性实现 直接上代码把！~ c include include include typedef struct stack{ int top; int data 10 ; } S ; bool push S sta,..."
+pubDate: "2019-01-28"
+createdAt: "2019-01-28 15:34:00"
+tags:
+  - "c-cpp"
+  - "数据结构"
+  - "c-c"
+updatedDate: "2019-01-28"
+updatedAt: "2019-01-28 15:35:41"
+---
+
+{/* migrated from Typecho: cid=139 | slug=stack-array | source-categories=c-cpp | source-tags=数据结构,c-c | merged-tags=c-cpp,数据结构,c-c */}
+
+# 数据结构(三) - 堆栈(线性实现)
+
+直接上代码把！~
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <malloc.h> 
+typedef struct stack{
+	int top;
+	int data[10];
+} S ;
+bool push(S * sta, int num);
+bool pop(S * sta);
+void foreach_stack(S * sta); 
+int main(int argc, char *argv[])
+{
+	S * sta = (S *)malloc(sizeof(S));
+	sta->top = -1;
+	printf("%d\n\n",sta->top);
+	push(sta , 5);
+	push(sta , 6);
+	push(sta , 8);
+	foreach_stack(sta);
+	pop(sta);
+	pop(sta);
+	foreach_stack(sta);
+	return 0;
+}
+//入栈 
+bool push(S * sta, int num){
+    int maxsize = 9;
+    if(sta->top == maxsize){
+        printf("满\n");
+        return false;
+    }
+    (sta->top)++;
+    sta->data[sta->top] = num;
+    printf("%d 入栈 %d\n",num, sta->top);
+    return true;
+}
+//出栈
+bool pop(S * sta)
+{
+	 if(sta->top == -1){
+ 		printf("空\n");
+ 		return false;
+	}
+	(sta->top)--;
+	printf("%d 出栈%d\n",sta->data[sta->top+1], sta->top+1);
+	return true;
+}
+//遍历栈
+void foreach_stack(S * sta)
+{
+	if(sta->top == -1){
+		printf("空\n");
+		return ;
+	}
+	for(int i=0;i <= sta->top; i++)
+		printf("%d  ",sta->data[i]);
+	printf("\n遍历完成\n");
+	return ;
+} 
+```

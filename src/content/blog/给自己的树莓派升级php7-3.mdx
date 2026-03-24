@@ -1,0 +1,60 @@
+---
+title: "给自己的树莓派升级php7.3"
+description: "! php7.3 1 前不久php7.4发布了demo 看了我的设备，也就树莓派这货还停留在php7.0.2版本，于是我闭上眼摇摇头~对他说：你已经是一个成熟的树莓派了，该学会自己安装新的软件版本了~，睁开眼控制台输入php -v 准备见证..."
+pubDate: "2019-07-22"
+createdAt: "2019-07-22 18:12:00"
+tags:
+  - "php"
+  - "php7-3"
+  - "树莓派"
+  - "树莓派php7-3"
+  - "php7-0"
+  - "php7-0-2"
+updatedDate: "2019-07-22"
+updatedAt: "2019-07-22 21:58:36"
+---
+
+{/* migrated from Typecho: cid=151 | slug=152 | source-categories=php | source-tags=php7-3,树莓派,树莓派php7-3,php7-0,php7-0-2 | merged-tags=php,php7-3,树莓派,树莓派php7-3,php7-0,php7-0-2 */}
+
+![php7.3][1]
+前不久php7.4发布了demo 看了我的设备，也就树莓派这货还停留在php7.0.2版本，于是我闭上眼摇摇头~对他说：你已经是一个成熟的树莓派了，该学会自己安装新的软件版本了~，睁开眼控制台输入php -v 准备见证奇迹~哎，还是熟悉的php7.0.2版本~
+
+闲着也是闲着呗~那就给自己的树莓派升级php7.3
+
+## 1、卸载老版本
+
+```shell
+$ sudo apt -purge remove php7.0-fpm php7.0-curl php7.0-gd php7.0-intl php7.0-mbstring php7.0-mysql php7.0-imap php7.0-opcache php7.0-sqlite3 php7.0-xml php7.0-xmlrpc php7.0-zip
+
+$ sudo apt autoremove
+
+$ sudo apt autoclean
+```
+
+测试一下 执行`php -v`应该报错了~
+
+## 2、还是安装新版本~
+
+```shell
+$ sudo apt install -y -t buster php7.3-fpm php7.3-curl php7.3-gd php7.3-intl php7.3-mbstring php7.3-mysql php7.3-imap php7.3-opcache php7.3-sqlite3 php7.3-xml php7.3-xmlrpc php7.3-zip
+# -t 是指让apt包管理器选择指定的版本安装~
+```
+
+测试看看~ 终端输入`php -v` ，同时嘴里嘟囔着`芝麻开门`~
+
+## 3、让Nginx支持php7.3
+
+在终端输入:
+
+```shell
+$ sudo nano /etc/nginx/sites-enabled/default
+```
+
+将`php7.0-fpm.sock`改为`php7.3-fpm.sock`这样默认站点就支持php7.3啦~
+
+测试下~  编辑`/var/www/html/index.php`文件并写入`<?php echo phpinfo(); ?>`ctrl+x保存退出 
+
+在浏览器访问127.0.0.1 出来内容即可~！！！！
+
+
+  [1]: http://bitbear.cdn.v2geek.com/uploads/1907222158BB34D594B.png
