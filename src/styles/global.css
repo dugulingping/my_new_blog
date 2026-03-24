@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@theme {
+  --animate-blink: blink 1.2s step-end infinite;
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Bulletproof theme visibility classes */
@@ -14,6 +22,18 @@
 ::selection {
 	background-color: #bc152d;
 	color: #ffffff;
+}
+
+/* === Global Prose Link Styles === */
+@layer components {
+	.prose a {
+		color: #bc152d !important;
+		text-decoration: none !important;
+		transition: color 0.3s ease;
+	}
+	.prose a:hover {
+		color: #ffb3b1 !important;
+	}
 }
 
 @layer base {

@@ -1,0 +1,20 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	tag: string;
+	href: string;
+}
+
+const { tag, href } = Astro.props;
+---
+
+<a 
+	href={href} 
+	class="tag-pill inline-flex items-center text-sm font-mono tracking-widest no-underline transition-colors duration-300 px-1.5 py-0.5 -ml-1 text-[#bc152d] dark:text-[#ffb3b1] hover:bg-[#bc152d]/10 dark:hover:bg-[#ffb3b1]/10 group/tag cursor-pointer"
+	data-tag={tag}
+>
+	<span class="opacity-50">[</span>
+	<span class="mx-1.5">{tag}</span>
+	<span class="opacity-50">]</span>
+</a>

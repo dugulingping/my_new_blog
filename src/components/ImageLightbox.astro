@@ -1,0 +1,88 @@
+---
+/**
+ * ImageLightbox — a global, zero-dependency image preview overlay.
+ * Drop this component once (e.g. in a layout or Header) and any
+ * <img> with `data-lightbox` will open in a full-screen overlay on click.
+ */
+---
+
+<!-- Lightbox Overlay -->
+<div id="lightbox-overlay" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/85 backdrop-blur-sm cursor-zoom-out" role="dialog" aria-modal="true" aria-label="Image preview">
+	<!-- Close Button -->
+	<button id="lightbox-close" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-10 font-mono text-sm tracking-widest" aria-label="Close preview">
+		[ ESC ]
+	</button>
+
+	<!-- Image -->
+	<img id="lightbox-img" src="" alt="" class="max-w-[92vw] max-h-[90vh] object-contain select-none transition-transform duration-300 ease-out shadow-2xl" />
+
+	<!-- Caption (filename) -->
+	<div id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs text-white/50 tracking-widest max-w-[80vw] truncate"></div>
+</div>
+
+<script is:inline>
+(function () {
+	const overlay = document.getElementById('lightbox-overlay');
+	const img = document.getElementById('lightbox-img');
+	const caption = document.getElementById('lightbox-caption');
+	if (!overlay || !img || !caption) return;
+
+	// Open lightbox
+	function openLightbox(src, alt) {
+		img.src = src;
+		img.alt = alt || '';
+		caption.textContent = alt || '';
+		overlay.classList.remove('hidden');
+		overlay.classList.add('flex');
+		document.body.style.overflow = 'hidden';
+		// Animate in
+		requestAnimationFrame(() => {
+			img.style.transform = 'scale(1)';
+			img.style.opacity = '1';
+		});
+	}
+
+	// Close lightbox
+	function closeLightbox() {
+		img.style.transform = 'scale(0.95)';
+		img.style.opacity = '0';
+		setTimeout(() => {
+			overlay.classList.add('hidden');
+			overlay.classList.remove('flex');
+			img.src = '';
+			document.body.style.overflow = '';
+		}, 200);
+	}
+
+	// Initial state for animation
+	img.style.transform = 'scale(0.95)';
+	img.style.opacity = '0';
+	img.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+
+	// Click overlay background or close button to dismiss
+	overlay.addEventListener('click', (e) => {
+		if (e.target === overlay || e.target.id === 'lightbox-close') {
+			closeLightbox();
+		}
+	});
+
+	// ESC key to close
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+			closeLightbox();
+		}
+	});
+
+	// Delegate click on any [data-lightbox] image
+	document.addEventListener('click', (e) => {
+		const trigger = e.target.closest('[data-lightbox]');
+		if (trigger) {
+			e.preventDefault();
+			e.stopPropagation();
+			const src = trigger.getAttribute('data-lightbox') || trigger.src;
+			const alt = trigger.alt || trigger.getAttribute('data-alt') || '';
+			openLightbox(src, alt);
+		}
+	});
+})();
+</script>
