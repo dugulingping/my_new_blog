@@ -3,16 +3,47 @@ const today = new Date();
 import { Icon } from "astro-icon/components";
 ---
 
-<footer class="py-16 px-4 mt-10 border-t border-neutral-100 dark:border-neutral-800/50 transition-colors duration-300">
+<footer
+	class="py-16 px-4 mt-10 border-t border-neutral-100 dark:border-neutral-800/50 transition-colors duration-300"
+>
 	<div class="flex flex-col items-center gap-6">
 		<!-- The "Seal" Component -->
-		<div class="w-10 h-10 bg-[#bc152d] flex items-center justify-center shadow-sm">
+		<div
+			class="w-10 h-10 bg-[#bc152d] flex items-center justify-center shadow-sm"
+		>
 			<Icon name="lucide:pen-tool" class="w-5 h-5 text-white" />
 		</div>
 
-		<!-- Copyright -->
-		<p class="font-body text-[10px] tracking-[0.3em] text-neutral-400 dark:text-neutral-500 uppercase">
-			独孤伶俜 &copy; {today.getFullYear()}
-		</p>
+		<!-- Text Group -->
+		<div class="flex flex-col items-center gap-2 -mt-2">
+			<!-- Copyright -->
+			<p
+				class="font-body text-[10px] tracking-[0.3em] text-neutral-400 dark:text-neutral-500 uppercase"
+			>
+				独孤伶俜 &copy; {today.getFullYear()}
+			</p>
+
+			<!-- Filing Info -->
+			<div
+				class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[9px] tracking-widest text-neutral-400 dark:text-neutral-500 uppercase opacity-70"
+			>
+				<a
+					href="https://beian.miit.gov.cn/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hover:text-[#bc152d] transition-colors"
+				>
+					青ICP备2020001229号
+				</a>
+				<a
+					href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=62090002000109"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hover:text-[#bc152d] transition-colors whitespace-nowrap"
+				>
+					甘公网安备62090002000109号
+				</a>
+			</div>
+		</div>
 	</div>
 </footer>

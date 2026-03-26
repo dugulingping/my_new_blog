@@ -4,7 +4,7 @@ import { formatMemoDate, formatMemoTime, getAttachmentUrl, type MemoAttachment }
 import { Icon } from "astro-icon/components";
 import TagPill from "./TagPill.astro";
 
-interface Props {
+export interface Props {
 	content: string;
 	displayTime: string;
 	/** Show full date (true) or short time only (false) */
