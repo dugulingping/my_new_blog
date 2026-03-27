@@ -1,5 +1,11 @@
 // Memos API data abstraction layer (v2 API — /api/v1/memos)
-const MEMOS_API_BASE = import.meta.env.MEMOS_API_BASE || "http://127.0.0.1:5230";
+// PUBLIC_MEMOS_API_BASE is Astro's convention for browser-accessible env vars.
+// process.env fallback covers build-time Node.js contexts (e.g. astro.config.mjs).
+export const MEMOS_API_BASE =
+	import.meta.env.PUBLIC_MEMOS_API_BASE ||
+	(typeof process !== "undefined" && process.env.PUBLIC_MEMOS_API_BASE) ||
+	"http://127.0.0.1:5230";
+
 const MEMOS_API_URL = `${MEMOS_API_BASE}/api/v1/memos`;
 
 /**

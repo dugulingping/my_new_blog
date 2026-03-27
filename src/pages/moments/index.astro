@@ -1,0 +1,326 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import { SITE_TITLE } from "../../consts";
+import { MEMOS_API_BASE } from "../../lib/fetchMemos";
+---
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<BaseHead title={`碎片随笔 | ${SITE_TITLE}`} description="日常动态、碎片随笔和灵感记录" />
+	</head>
+	<body class="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
+		<Header />
+		<main class="mx-auto max-w-4xl px-4 py-10 relative font-body min-h-[max(calc(100vh-200px),600px)]">
+
+			<!-- Page Header -->
+			<div class="flex flex-col items-start gap-8 mb-16 mt-12 relative z-10 pl-4 md:pl-10 text-left">
+				<!-- Red Vertical Stroke Accent -->
+				<div class="absolute left-0 top-2 bottom-4 w-px bg-gradient-to-b from-[#bc152d] via-[#bc152d]/50 to-transparent shadow-[0_0_8px_rgba(188,21,45,0.4)]"></div>
+				
+				<div class="w-full">
+					<span class="text-[#bc152d] font-body text-xs tracking-[0.3em] uppercase mb-8 block">Moments</span>
+					<h1 class="font-headline text-4xl md:text-5xl font-bold tracking-widest mb-8 text-neutral-900 dark:text-neutral-100 leading-tight">
+						<div class="flex items-center flex-wrap">碎片随笔<span class="animate-blink ml-1 font-mono text-[#bc152d]">_</span></div>
+						<div class="text-neutral-400 dark:text-neutral-500 font-normal text-xl md:text-2xl mt-4 tracking-widest">日常动态、灵感与信号碎片</div>
+					</h1>
+				</div>
+			</div>
+
+			<!-- Active Tag Filter Banner -->
+			<div id="active-tag-banner" class="hidden flex items-center justify-between pb-4 mb-8 border-b border-neutral-200 dark:border-neutral-800 relative z-20">
+				<div class="flex items-center gap-3">
+					<span class="text-sm font-mono text-neutral-400 dark:text-neutral-500 font-bold tracking-widest">QUERY //</span>
+					<div id="active-tag-container"></div>
+				</div>
+				<a href="?" id="clear-filter-btn" class="text-sm font-mono text-neutral-400 dark:text-neutral-500 hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors duration-200 no-underline tracking-widest uppercase">
+					[ 清除 / Clear ]
+				</a>
+			</div>
+
+			<!-- Memos List -->
+			<section class="relative z-20 mt-8">
+				<!-- Loading state -->
+				<div id="memos-loading" class="flex flex-col gap-8">
+					{[...Array(5)].map(() => (
+						<div class="relative pl-6 border-l border-neutral-200 dark:border-neutral-800 animate-pulse">
+							<div class="h-3 w-36 bg-neutral-200 dark:bg-neutral-700 rounded mb-3"></div>
+							<div class="h-4 w-full bg-neutral-100 dark:bg-neutral-800 rounded mb-2"></div>
+							<div class="h-4 w-4/5 bg-neutral-100 dark:bg-neutral-800 rounded"></div>
+						</div>
+					))}
+				</div>
+
+				<!-- Memos container (populated by JS) -->
+				<div id="memos-container" class="hidden flex flex-col gap-8"></div>
+
+				<!-- Empty state -->
+				<div id="memos-empty" class="hidden text-center py-16 text-neutral-400 dark:text-neutral-500">
+					<p class="font-mono text-sm tracking-widest">// NO SIGNAL DETECTED</p>
+					<p class="mt-2 text-xs tracking-wider">暂无公开动态，请稍后再试。</p>
+				</div>
+
+				<!-- Error state -->
+				<div id="memos-error" class="hidden text-center py-16 text-neutral-400 dark:text-neutral-500">
+					<p class="font-mono text-sm tracking-widest text-[#bc152d]">// SIGNAL LOST</p>
+					<p class="mt-2 text-xs tracking-wider">无法连接到 Memos 服务，请稍后重试。</p>
+				</div>
+			</section>
+
+			<!-- Pagination Navigator -->
+			<nav id="pagination-nav" class="hidden flex items-center justify-between mt-16 pt-8 border-t border-neutral-200 dark:border-neutral-800 font-mono text-sm">
+				<div>
+					<button id="btn-prev" class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-900 dark:border-white text-neutral-900 dark:text-white hover:opacity-70 transition-opacity uppercase tracking-widest text-xs disabled:border-neutral-300 disabled:dark:border-neutral-700 disabled:text-neutral-300 disabled:dark:text-neutral-700 disabled:cursor-not-allowed">
+						<svg class="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+						上一页
+					</button>
+				</div>
+				<span id="page-indicator" class="text-neutral-500 dark:text-neutral-400 tracking-widest text-xs"></span>
+				<div>
+					<button id="btn-next" class="inline-flex items-center gap-2 px-4 py-2 border border-neutral-900 dark:border-white text-neutral-900 dark:text-white hover:opacity-70 transition-opacity uppercase tracking-widest text-xs disabled:border-neutral-300 disabled:dark:border-neutral-700 disabled:text-neutral-300 disabled:dark:text-neutral-700 disabled:cursor-not-allowed">
+						下一页
+						<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+					</button>
+				</div>
+			</nav>
+
+		</main>
+		<Footer />
+
+		<!-- marked.js for client-side markdown rendering -->
+		<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+
+		<script is:inline define:vars={{ MEMOS_API_BASE }}>
+			const PAGE_SIZE = 15;
+
+			// All memos fetched (we load all pages once, then paginate client-side)
+			let allMemos = [];
+			let currentPage = 1;
+			let activeTag = null;
+
+			// ── Utility: Format date ─────────────────────────────────
+			function formatDate(iso) {
+				const d = new Date(iso);
+				const year = d.getFullYear();
+				const month = d.getMonth() + 1;
+				const day = d.getDate();
+				const hh = String(d.getHours()).padStart(2, "0");
+				const mm = String(d.getMinutes()).padStart(2, "0");
+				return `${year}年${month}月${day}日 ${hh}:${mm}`;
+			}
+
+			function getAttachmentUrl(name, filename) {
+				return `${MEMOS_API_BASE}/file/${name}/${encodeURIComponent(filename)}`;
+			}
+
+			// ── Markdown rendering (with tag stripping) ──────────────
+			function renderContent(content, tags) {
+				let text = content;
+				(tags || []).forEach(tag => {
+					const escaped = tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+					text = text.replace(new RegExp(`#${escaped}(?:\\s+|$)`, "g"), " ");
+				});
+				text = text.trim();
+				if (typeof marked !== "undefined") {
+					marked.setOptions({ breaks: true, gfm: true });
+					return marked.parse(text);
+				}
+				// Minimal fallback if CDN fails
+				return `<p>${text.replace(/\n/g, "<br>")}</p>`;
+			}
+
+			// ── Build card HTML ───────────────────────────────────────
+			function buildCardHTML(memo) {
+				const tags = memo.tags || [];
+				const attachments = memo.attachments || [];
+				const images = attachments.filter(a => a.type && a.type.startsWith("image/"));
+				const dateLabel = formatDate(memo.displayTime);
+				const htmlContent = renderContent(memo.content, tags);
+
+				// Tags HTML
+				const tagsHTML = tags.length > 0 ? `
+					<div class="mt-4 mb-6 flex flex-wrap gap-3">
+						${tags.map(tag => `
+							<a href="?tag=${encodeURIComponent(tag)}" data-tag="${tag}"
+								class="text-xs font-mono text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-sm flex items-center gap-1 cursor-pointer no-underline hover:text-[#bc152d] dark:hover:text-[#ffb3b1] hover:bg-[#bc152d]/5 dark:hover:bg-[#bc152d]/20 transition-all duration-200 tracking-widest">
+								[ ${tag} ]
+							</a>
+						`).join("")}
+					</div>` : "";
+
+				// Images HTML
+				let imagesHTML = "";
+				if (images.length > 0) {
+					const gridClass = images.length === 1 ? "" : images.length === 2 ? "grid grid-cols-2 gap-2" : "grid grid-cols-3 gap-2";
+					imagesHTML = `<div class="mt-4 ${gridClass}">
+						${images.map(att => {
+							const src = getAttachmentUrl(att.name, att.filename);
+							if (images.length === 1) {
+								return `<div class="inline-flex overflow-hidden border border-neutral-200 dark:border-neutral-800 hover:border-[#bc152d] dark:hover:border-[#bc152d] transition-colors cursor-zoom-in group/img bg-transparent max-w-full sm:max-w-[80%] md:max-w-[75%] lg:max-w-[66%]">
+									<img src="${src}" alt="${att.filename}" data-lightbox="${src}" class="!m-0 w-full h-auto max-h-[36rem] object-cover block transition-transform duration-300 group-hover/img:scale-[1.03]" loading="lazy" />
+								</div>`;
+							}
+							return `<div class="relative overflow-hidden border border-neutral-200 dark:border-neutral-800 hover:border-[#bc152d] dark:hover:border-[#bc152d] transition-colors cursor-zoom-in group/img bg-transparent aspect-square w-full">
+								<img src="${src}" alt="${att.filename}" data-lightbox="${src}" class="!m-0 absolute inset-0 w-full h-full object-cover block transition-transform duration-300 group-hover/img:scale-[1.03]" loading="lazy" />
+							</div>`;
+						}).join("")}
+					</div>`;
+				}
+
+				// Location HTML
+				const locationHTML = memo.location && memo.location.placeholder ? `
+					<div class="mt-3 flex items-center gap-1.5 text-xs text-neutral-400 dark:text-neutral-500 font-mono tracking-wider">
+						<svg class="w-3.5 h-3.5 text-[#bc152d] opacity-70 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+						<span>${memo.location.placeholder}</span>
+					</div>` : "";
+
+				return `
+					<div class="relative pl-6 border-l border-neutral-300 dark:border-neutral-700 w-full group moment-card" data-tags="${tags.join(",")}">
+						<!-- Timeline indicator -->
+						<div class="absolute left-[-7.5px] top-1.5 flex items-center justify-center w-4 h-4">
+							<div class="absolute w-full h-full bg-white dark:bg-neutral-900 rounded-full scale-[1.3]"></div>
+							<svg class="relative z-10 w-4 h-4 text-[#bc152d] transition-all duration-300 group-hover:scale-125 group-hover:text-[#e01936]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+						</div>
+						<!-- Timestamp -->
+						<span class="font-mono text-xs text-[#bc152d] opacity-90 mb-2 block tracking-widest">${dateLabel}</span>
+						<!-- Content -->
+						<div class="prose prose-sm prose-neutral dark:prose-invert max-w-none text-neutral-600 dark:text-neutral-400 leading-relaxed m-0 prose-p:my-2 prose-a:text-[#bc152d] prose-a:no-underline hover:prose-a:underline prose-code:text-xs prose-code:bg-neutral-100 prose-code:dark:bg-neutral-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-none prose-pre:bg-neutral-50 prose-pre:dark:bg-neutral-800/80 prose-pre:border prose-pre:border-neutral-200 prose-pre:dark:border-neutral-700 prose-pre:rounded-none">${htmlContent}</div>
+						${tagsHTML}
+						${imagesHTML}
+						${locationHTML}
+					</div>`;
+			}
+
+			// ── Fetch all memos (paginated API) ───────────────────────
+			async function fetchAllMemos() {
+				const all = [];
+				let pageToken = "";
+				const apiUrl = `${MEMOS_API_BASE}/api/v1/memos`;
+				try {
+					do {
+						const url = pageToken
+							? `${apiUrl}?filter=visibility=="PUBLIC"&pageSize=50&pageToken=${pageToken}`
+							: `${apiUrl}?filter=visibility=="PUBLIC"&pageSize=50`;
+						const res = await fetch(url);
+						if (!res.ok) break;
+						const data = await res.json();
+						all.push(...(data.memos || []));
+						pageToken = data.nextPageToken || "";
+					} while (pageToken);
+				} catch (e) {
+					console.error("[Moments] fetch error:", e);
+					return null; // signals error
+				}
+				return all;
+			}
+
+			// ── Render current page ───────────────────────────────────
+			function getFilteredMemos() {
+				if (!activeTag) return allMemos;
+				return allMemos.filter(m => (m.tags || []).includes(activeTag));
+			}
+
+			function renderPage() {
+				const filtered = getFilteredMemos();
+				const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+				if (currentPage > totalPages) currentPage = totalPages;
+
+				const start = (currentPage - 1) * PAGE_SIZE;
+				const pageMemos = filtered.slice(start, start + PAGE_SIZE);
+
+				const container = document.getElementById("memos-container");
+				container.innerHTML = pageMemos.map(buildCardHTML).join("");
+
+				// Pagination
+				const nav = document.getElementById("pagination-nav");
+				const indicator = document.getElementById("page-indicator");
+				const btnPrev = document.getElementById("btn-prev");
+				const btnNext = document.getElementById("btn-next");
+
+				if (totalPages > 1) {
+					nav.classList.remove("hidden");
+					indicator.textContent = `[ ${currentPage} / ${totalPages} ]`;
+					btnPrev.disabled = currentPage <= 1;
+					btnNext.disabled = currentPage >= totalPages;
+				} else {
+					nav.classList.add("hidden");
+				}
+
+				// Re-init lightbox for newly added images
+				if (typeof window.__initLightbox === "function") window.__initLightbox();
+			}
+
+			// ── Tag filter UI ─────────────────────────────────────────
+			function applyTagFilter() {
+				const params = new URLSearchParams(window.location.search);
+				activeTag = params.get("tag") || null;
+				currentPage = parseInt(params.get("page") || "1", 10);
+
+				const banner = document.getElementById("active-tag-banner");
+				const tagContainer = document.getElementById("active-tag-container");
+
+				if (activeTag && banner && tagContainer) {
+					banner.classList.remove("hidden");
+					tagContainer.innerHTML = `<a href="?" class="text-sm font-mono text-[#bc152d] dark:text-[#ffb3b1] bg-[#bc152d]/5 dark:bg-[#bc152d]/20 px-2 py-1 rounded-sm flex items-center gap-1 cursor-pointer no-underline hover:opacity-80 transition-opacity tracking-widest">[ ${activeTag} &times; ]</a>`;
+				} else if (banner) {
+					banner.classList.add("hidden");
+				}
+			}
+
+			// ── Pagination button handlers ────────────────────────────
+			document.getElementById("btn-prev").addEventListener("click", () => {
+				if (currentPage > 1) {
+					currentPage--;
+					renderPage();
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				}
+			});
+			document.getElementById("btn-next").addEventListener("click", () => {
+				const filtered = getFilteredMemos();
+				const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+				if (currentPage < totalPages) {
+					currentPage++;
+					renderPage();
+					window.scrollTo({ top: 0, behavior: "smooth" });
+				}
+			});
+
+			// ── Main init ─────────────────────────────────────────────
+			async function init() {
+				applyTagFilter();
+
+				const loading = document.getElementById("memos-loading");
+				const container = document.getElementById("memos-container");
+				const empty = document.getElementById("memos-empty");
+				const error = document.getElementById("memos-error");
+
+				const memos = await fetchAllMemos();
+
+				loading.classList.add("hidden");
+
+				if (memos === null) {
+					error.classList.remove("hidden");
+					return;
+				}
+
+				// Sort newest first
+				memos.sort((a, b) => new Date(b.displayTime) - new Date(a.displayTime));
+				allMemos = memos;
+
+				if (allMemos.length === 0) {
+					empty.classList.remove("hidden");
+					return;
+				}
+
+				container.classList.remove("hidden");
+				renderPage();
+			}
+
+			// Run on load and Astro View Transitions
+			document.addEventListener("DOMContentLoaded", init);
+			document.addEventListener("astro:page-load", init);
+		</script>
+	</body>
+</html>
