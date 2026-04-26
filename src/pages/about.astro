@@ -1,98 +1,284 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE } from '../consts';
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE } from "../consts";
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-cn">
 	<head>
-		<BaseHead title={`关于我 | ${SITE_TITLE}`} description="关于独孤伶俜的博客背景与个人介绍" />
+		<BaseHead
+			title={`关于我 | ${SITE_TITLE}`}
+			description="关于独孤伶俜的博客背景与个人介绍"
+		/>
 	</head>
-	<body class="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
+	<body
+		class="bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 transition-colors duration-300"
+	>
 		<Header />
-		
-		<main class="mx-auto max-w-4xl px-4 py-10 font-body relative overflow-hidden min-h-[max(calc(100vh-200px),600px)]">
-			
-			<div class="flex flex-col md:flex-row items-start gap-8 md:gap-16 mb-24 mt-12 relative z-10 pl-4 md:pl-10 text-left w-full">
+
+		<main
+			class="mx-auto max-w-4xl px-4 py-10 font-body relative overflow-hidden min-h-[max(calc(100vh-200px),600px)]"
+		>
+			<div
+				class="flex flex-col md:flex-row items-start gap-8 md:gap-16 mb-24 mt-12 relative z-10 pl-4 md:pl-10 text-left w-full"
+			>
 				<!-- Red Vertical Stroke Accent -->
-				<div class="absolute left-0 top-2 bottom-4 w-px bg-gradient-to-b from-[#bc152d] via-[#bc152d]/50 to-transparent shadow-[0_0_8px_rgba(188,21,45,0.4)] text-left"></div>
-				
+				<div
+					class="absolute left-0 top-2 bottom-4 w-px bg-gradient-to-b from-[#bc152d] via-[#bc152d]/50 to-transparent shadow-[0_0_8px_rgba(188,21,45,0.4)] text-left"
+				>
+				</div>
+
 				<!-- Text Column -->
 				<div class="w-full lg:max-w-2xl">
-					<span class="text-[#bc152d] font-body text-xs tracking-[0.3em] uppercase mb-8 block">About the Author</span>
-					
-					<h1 class="font-headline text-4xl md:text-5xl font-bold tracking-widest mb-12 text-neutral-900 dark:text-neutral-100 leading-tight flex flex-wrap items-center">
-						逻辑 · 平衡 · 电波<span class="animate-blink ml-1 font-mono text-[#bc152d]">_</span>
+					<span
+						class="text-[#bc152d] font-body text-xs tracking-[0.3em] uppercase mb-8 block"
+						>About the Author</span
+					>
+
+					<h1
+						class="font-headline text-4xl md:text-5xl font-bold tracking-widest mb-12 text-neutral-900 dark:text-neutral-100 leading-tight flex flex-wrap items-center"
+					>
+						逻辑 · 平衡 · 电波<span
+							class="animate-blink ml-1 font-mono text-[#bc152d]"
+							>_</span
+						>
 					</h1>
-					
+
 					<!-- Content Block -->
-					<div class="prose prose-neutral dark:prose-invert max-w-none font-body text-sm md:text-base leading-relaxed text-neutral-500 dark:text-neutral-400 tracking-wider relative z-20 transition-colors">
-						
-						<h2 class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-0 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2">
+					<div
+						class="prose prose-neutral dark:prose-invert max-w-none font-body text-sm md:text-base leading-relaxed text-neutral-500 dark:text-neutral-400 tracking-wider relative z-20 transition-colors"
+					>
+						<h2
+							class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-0 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2"
+						>
 							[ 身份校验 / Identity ]
 						</h2>
 						<p class="mb-4 text-neutral-700 dark:text-neutral-400">
 							你好，我是独孤伶俜。
 						</p>
 						<p class="mb-4 text-neutral-700 dark:text-neutral-400">
-							毕业于天津理工大学。早年是个标准的软件狗，打过蓝桥杯（已退役）和 <del>ACM</del>。
+							毕业于天津理工大学。早年是个标准的软件狗，打过蓝桥杯（已退役）和
+							<del>ACM</del>。
 						</p>
 						<p class="mb-4 text-neutral-700 dark:text-neutral-400">
-							目前我的主业是一名核算会计。在此之前，曾在某市调公司工作，主要在 Confirmit 平台上使用 JScript 语言编写问卷逻辑，偶尔也用 JavaScript 写写网页端逻辑；期间还曾使用 Java 做过一些四方支付程序的二次开发。
+							目前我的主业是一名核算会计。在此之前，曾在某市调公司工作，主要在
+							Confirmit 平台上使用 JScript
+							语言编写问卷逻辑，偶尔也用 JavaScript
+							写写网页端逻辑；期间还曾使用 Java
+							做过一些四方支付程序的二次开发。
 						</p>
 						<p class="mb-10 text-neutral-700 dark:text-neutral-400">
-							现在写代码更多是出于纯粹的爱好，目前主要使用 Go 语言在造一些业余项目的轮子。此外，我也是一名业余无线电爱好者，目前主要活跃于 <a href="https://bg5esn.com/docs/" target="_blank" class="text-[#bc152d] hover:text-[#ffb3b1] transition-colors no-underline">FMO</a> 网络。我的呼号是 <strong>BG9JYT</strong>，期待在频段里与您建立通联。
+							现在写代码更多是出于纯粹的爱好，目前主要使用 Go
+							语言在造一些业余项目的轮子。此外，我也是一名业余无线电爱好者，目前主要活跃于
+							<a
+								href="https://bg5esn.com/docs/"
+								target="_blank"
+								class="text-[#bc152d] hover:text-[#ffb3b1] transition-colors no-underline"
+								>FMO</a
+							> 网络。我的呼号是 <strong>BG9JYT</strong
+							>，期待在频段里与您建立通联。
 						</p>
 
-						<h2 class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-12 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2">
+						<h2
+							class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-12 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2"
+						>
 							[ 运行状态 / Status ]
 						</h2>
-						<ul class="list-none pl-0 mb-10 text-neutral-700 dark:text-neutral-400 space-y-3">
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">-</span><span>备考 2026 年中级会计师考试。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">-</span><span>备考 2026 年税务师考试。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">-</span><span>备考业余无线电操作证 B 证。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">-</span><span>寻找没有版权争议的雪山视频 BGM。</span></li>
+						<ul
+							class="list-none pl-0 mb-10 text-neutral-700 dark:text-neutral-400 space-y-3"
+						>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>-</span
+								><span>备考 2026 年中级会计师考试。</span>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>-</span
+								><span>备考 2026 年税务师考试。</span>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>-</span
+								><span style="text-decoration: line-through"
+									>备考业余无线电操作证 B 证。</span
+								>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>-</span
+								><span>寻找没有版权争议的雪山视频 BGM。</span>
+							</li>
 						</ul>
 
-						<h2 class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-12 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2">
+						<h2
+							class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-12 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2"
+						>
 							[ 研发归档 / Projects ]
 						</h2>
-						<p class="mb-4 font-bold text-neutral-800 dark:text-neutral-200">
-							近期在写<span class="animate-pulse ml-0.5 opacity-60 font-mono text-[#bc152d]">_</span>
+						<p
+							class="mb-4 font-bold text-neutral-800 dark:text-neutral-200"
+						>
+							近期在写<span
+								class="animate-pulse ml-0.5 opacity-60 font-mono text-[#bc152d]"
+								>_</span
+							>
 						</p>
-						<ul class="list-none pl-0 mb-8 text-neutral-700 dark:text-neutral-400 space-y-3">
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">&gt;</span><span><strong>fmoqc / fmomap</strong>：基于 Go 语言的 FMO 节点地图可视化与系统开发。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">&gt;</span><span><strong>eQSL 系统</strong>：现代化的业余无线电电子卡片（eQSL）生成与管理系统。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">&gt;</span><span><strong>四方支付系统</strong>：探索“小而美”架构的独立支付网关系统。</span></li>
-						</ul>
-						
-						<p class="mb-4 font-bold text-neutral-800 dark:text-neutral-200 mt-8">
-							早年造的轮子<span class="animate-pulse ml-0.5 opacity-60 font-mono text-[#bc152d]">_</span>
-						</p>
-						<ul class="list-none pl-0 mb-10 text-neutral-700 dark:text-neutral-400 space-y-3">
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">&gt;</span><span><strong>Music163API</strong>：高品质、简单易用的网易云音乐 API 服务。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">&gt;</span><span><strong>一言 (hitokoto) API</strong>：支持自建私有库的句子接口。</span></li>
-							<li class="flex items-start"><span class="text-[#bc152d] font-mono mr-3">&gt;</span><span><strong>Typecho 模板</strong>：一套以前自用的博客皮肤。</span></li>
+						<ul
+							class="list-none pl-0 mb-8 text-neutral-700 dark:text-neutral-400 space-y-3"
+						>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>&gt;</span
+								><span
+									><strong>fmoqc / fmomap</strong>：基于 Go
+									语言的 FMO 节点地图可视化与系统开发。</span
+								>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>&gt;</span
+								><span
+									><strong>eQSL 系统</strong
+									>：现代化的业余无线电电子卡片（eQSL）生成与管理系统。</span
+								>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>&gt;</span
+								><span
+									><strong>四方支付系统</strong
+									>：探索“小而美”架构的独立支付网关系统。</span
+								>
+							</li>
 						</ul>
 
-						<h2 class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-12 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2">
+						<p
+							class="mb-4 font-bold text-neutral-800 dark:text-neutral-200 mt-8"
+						>
+							早年造的轮子<span
+								class="animate-pulse ml-0.5 opacity-60 font-mono text-[#bc152d]"
+								>_</span
+							>
+						</p>
+						<ul
+							class="list-none pl-0 mb-10 text-neutral-700 dark:text-neutral-400 space-y-3"
+						>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>&gt;</span
+								><span
+									><strong>Music163API</strong
+									>：高品质、简单易用的网易云音乐 API 服务。</span
+								>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>&gt;</span
+								><span
+									><strong>一言 (hitokoto) API</strong
+									>：支持自建私有库的句子接口。</span
+								>
+							</li>
+							<li class="flex items-start">
+								<span class="text-[#bc152d] font-mono mr-3"
+									>&gt;</span
+								><span
+									><strong>Typecho 模板</strong
+									>：一套以前自用的博客皮肤。</span
+								>
+							</li>
+						</ul>
+
+						<h2
+							class="font-mono text-sm tracking-[0.2em] text-neutral-800 dark:text-neutral-200 mt-12 mb-4 font-bold border-b border-neutral-200 dark:border-neutral-800 pb-2"
+						>
 							[ 通讯链路 / Contact ]
 						</h2>
 						<p class="mb-6 text-neutral-700 dark:text-neutral-400">
-							除单独说明外，本站文章默认采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" class="text-[#bc152d] hover:text-[#ffb3b1] transition-colors no-underline">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可。如果你对代码、无线电有兴趣，或者想交流一下考证心得，可以通过以下方式找到我：
+							除单独说明外，本站文章默认采用 <a
+								href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh"
+								target="_blank"
+								class="text-[#bc152d] hover:text-[#ffb3b1] transition-colors no-underline"
+								>知识共享署名-相同方式共享 4.0 国际许可协议</a
+							> 进行许可。如果你对代码、无线电有兴趣，或者想交流一下考证心得，可以通过以下方式找到我：
 						</p>
-						<ul class="list-none pl-0 mb-10 text-neutral-700 dark:text-neutral-400 space-y-3 font-mono text-sm tracking-wide">
-							<li class="flex items-center"><span class="text-[#bc152d] mr-3">-</span><strong class="w-24 font-normal text-neutral-800 dark:text-neutral-200">Email:</strong><a href="mailto:admin@icyuyan.net" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline">admin@icyuyan.net</a></li>
-							<li class="flex items-center"><span class="text-[#bc152d] mr-3">-</span><strong class="w-24 font-normal text-neutral-800 dark:text-neutral-200">Github:</strong><a href="https://github.com/yeyuxingchen" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline">@独孤伶俜</a></li>
-							<li class="flex items-center"><span class="text-[#bc152d] mr-3">-</span><strong class="w-24 font-normal text-neutral-800 dark:text-neutral-200">Weibo:</strong><span class="text-neutral-600 dark:text-neutral-400">@独孤伶俜233</span></li>
-							<li class="flex items-center"><span class="text-[#bc152d] mr-3">-</span><strong class="w-24 font-normal text-neutral-800 dark:text-neutral-200">Twitter:</strong><a href="https://twitter.com/dugulingping" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline">@dugulingping</a></li>
-							<li class="flex items-center"><span class="text-[#bc152d] mr-3">-</span><strong class="w-24 font-normal text-neutral-800 dark:text-neutral-200">BiliBili:</strong><a href="http://space.bilibili.com/65041587" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline">@独孤伶俜_</a></li>
-							<li class="flex items-center"><span class="text-[#bc152d] mr-3">-</span><strong class="w-24 font-normal text-neutral-800 dark:text-neutral-200">NetEase:</strong><a href="http://music.163.com/#/user/home?id=137630579" target="_blank" class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline">@独孤伶俜</a></li>
+						<ul
+							class="list-none pl-0 mb-10 text-neutral-700 dark:text-neutral-400 space-y-3 font-mono text-sm tracking-wide"
+						>
+							<li class="flex items-center">
+								<span class="text-[#bc152d] mr-3">-</span
+								><strong
+									class="w-24 font-normal text-neutral-800 dark:text-neutral-200"
+									>Email:</strong
+								><a
+									href="mailto:admin@icyuyan.net"
+									class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline"
+									>admin@icyuyan.net</a
+								>
+							</li>
+							<li class="flex items-center">
+								<span class="text-[#bc152d] mr-3">-</span
+								><strong
+									class="w-24 font-normal text-neutral-800 dark:text-neutral-200"
+									>Github:</strong
+								><a
+									href="https://github.com/yeyuxingchen"
+									target="_blank"
+									class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline"
+									>@独孤伶俜</a
+								>
+							</li>
+							<li class="flex items-center">
+								<span class="text-[#bc152d] mr-3">-</span
+								><strong
+									class="w-24 font-normal text-neutral-800 dark:text-neutral-200"
+									>Weibo:</strong
+								><span
+									class="text-neutral-600 dark:text-neutral-400"
+									>@独孤伶俜233</span
+								>
+							</li>
+							<li class="flex items-center">
+								<span class="text-[#bc152d] mr-3">-</span
+								><strong
+									class="w-24 font-normal text-neutral-800 dark:text-neutral-200"
+									>Twitter:</strong
+								><a
+									href="https://twitter.com/dugulingping"
+									target="_blank"
+									class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline"
+									>@dugulingping</a
+								>
+							</li>
+							<li class="flex items-center">
+								<span class="text-[#bc152d] mr-3">-</span
+								><strong
+									class="w-24 font-normal text-neutral-800 dark:text-neutral-200"
+									>BiliBili:</strong
+								><a
+									href="http://space.bilibili.com/65041587"
+									target="_blank"
+									class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline"
+									>@独孤伶俜_</a
+								>
+							</li>
+							<li class="flex items-center">
+								<span class="text-[#bc152d] mr-3">-</span
+								><strong
+									class="w-24 font-normal text-neutral-800 dark:text-neutral-200"
+									>NetEase:</strong
+								><a
+									href="http://music.163.com/#/user/home?id=137630579"
+									target="_blank"
+									class="hover:text-[#bc152d] dark:hover:text-[#ffb3b1] transition-colors no-underline"
+									>@独孤伶俜</a
+								>
+							</li>
 						</ul>
 
-						
 						<!-- <div class="mt-12 pt-0 w-full flex items-center">
 							<a href="mailto:admin@icyuyan.net" class="inline-flex w-full sm:w-auto justify-center items-center gap-3 px-6 py-2.5 bg-transparent text-neutral-900 dark:text-white font-medium rounded-none border border-neutral-900 dark:border-white hover:opacity-70 transition-opacity duration-300 no-underline uppercase tracking-widest text-sm group">
 								<svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
