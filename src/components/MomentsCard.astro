@@ -6,7 +6,7 @@ import TagPill from "./TagPill.astro";
 
 export interface Props {
 	content: string;
-	displayTime: string;
+	createTime: string;
 	/** Show full date (true) or short time only (false) */
 	showFullDate?: boolean;
 	/** Attachment files from the memo */
@@ -21,7 +21,7 @@ export interface Props {
 	tags?: string[];
 }
 
-const { content, displayTime, showFullDate = true, attachments = [], location, tags = [] } = Astro.props;
+const { content, createTime, showFullDate = true, attachments = [], location, tags = [] } = Astro.props;
 
 // Configure marked for safe, synchronous rendering
 marked.setOptions({ async: false, breaks: true, gfm: true });
@@ -39,7 +39,7 @@ if (tags && tags.length > 0) {
 }
 
 const htmlContent = marked.parse(displayContent) as string;
-const dateLabel = showFullDate ? formatMemoDate(displayTime) : formatMemoTime(displayTime);
+const dateLabel = showFullDate ? formatMemoDate(createTime) : formatMemoTime(createTime);
 
 // Filter image attachments
 const imageAttachments = attachments.filter(att => att.type.startsWith("image/"));

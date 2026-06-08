@@ -136,7 +136,7 @@ import { MEMOS_API_BASE } from "../../lib/fetchMemos";
 				const tags = memo.tags || [];
 				const attachments = memo.attachments || [];
 				const images = attachments.filter(a => a.type && a.type.startsWith("image/"));
-				const dateLabel = formatDate(memo.displayTime);
+				const dateLabel = formatDate(memo.createTime);
 				const htmlContent = renderContent(memo.content, tags);
 
 				// Tags HTML
@@ -306,7 +306,7 @@ import { MEMOS_API_BASE } from "../../lib/fetchMemos";
 				}
 
 				// Sort newest first
-				memos.sort((a, b) => new Date(b.displayTime) - new Date(a.displayTime));
+				memos.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
 				allMemos = memos;
 
 				if (allMemos.length === 0) {

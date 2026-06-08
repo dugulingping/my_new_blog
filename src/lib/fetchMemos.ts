@@ -17,7 +17,6 @@ export interface MemoV2 {
 	creator: string;
 	createTime: string;
 	updateTime: string;
-	displayTime: string;
 	content: string;
 	visibility: string;
 	tags: string[];
@@ -29,6 +28,7 @@ export interface MemoV2 {
 		hasTaskList: boolean;
 		hasCode: boolean;
 		hasIncompleteTasks: boolean;
+		title?: string;
 	};
 	location?: {
 		placeholder: string;
